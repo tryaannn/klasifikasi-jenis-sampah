@@ -1,0 +1,47 @@
+{
+  "Plastic": [
+    "Plastic/Plastic_641.jpg",
+    "Plastic/Plastic_173.jpg",
+    "Plastic/Plastic_740.jpg"
+  ],
+  "Metal": [
+    "Metal/Metal_16.jpg",
+    "Metal/Metal_595.jpg",
+    "Metal/Metal_708.jpg"
+  ],
+  "Paper": [
+    "Paper/Paper_335.jpg",
+    "Paper/Paper_87.jpg",
+    "Paper/Paper_43.jpg"
+  ],
+  "Miscellaneous Trash": [
+    "Miscellaneous Trash/Miscellaneous Trash_327.jpg",
+    "Miscellaneous Trash/Miscellaneous Trash_448.jpg",
+    "Miscellaneous Trash/Miscellaneous Trash_156.jpg"
+  ],
+  "Cardboard": [
+    "Cardboard/Cardboard_305.jpg",
+    "Cardboard/Cardboard_252.jpg",
+    "Cardboard/Cardboard_175.jpg"
+  ],
+  "Vegetation": [
+    "Vegetation/Vegetation_421.jpg",
+    "Vegetation/Vegetation_350.jpg",
+    "Vegetation/Vegetation_257.jpg"
+  ],
+  "Glass": [
+    "Glass/Glass_269.jpg",
+    "Glass/Glass_133.jpg",
+    "Glass/Glass_185.jpg"
+  ],
+  "Food Organics": [
+    "Food Organics/Food Organics_405.jpg",
+    "Food Organics/Food Organics_45.jpg",
+    "Food Organics/Food Organics_122.jpg"
+  ],
+  "Textile Trash": [
+    "Textile Trash/Textile Trash_3.jpg",
+    "Textile Trash/Textile Trash_146.jpg",
+    "Textile Trash/Textile Trash_315.jpg"
+  ]
+}

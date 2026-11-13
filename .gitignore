@@ -1,0 +1,18 @@
+# data mentah tidak disimpan di repositori
+data/*
+!data/README.md
+dataset/
+*.zip
+*.tar.gz
+
+# keluaran sementara
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# sistem
+.DS_Store
+Thumbs.db
+~$*

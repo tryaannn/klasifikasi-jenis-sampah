@@ -1,0 +1,113 @@
+{
+  "total_citra": 4752,
+  "jumlah_kelas": 9,
+  "kelas": [
+    {
+      "kelas": "Plastic",
+      "jumlah": 921,
+      "persentase": 19.38,
+      "rasio_terhadap_min": 2.9
+    },
+    {
+      "kelas": "Metal",
+      "jumlah": 790,
+      "persentase": 16.62,
+      "rasio_terhadap_min": 2.48
+    },
+    {
+      "kelas": "Paper",
+      "jumlah": 500,
+      "persentase": 10.52,
+      "rasio_terhadap_min": 1.57
+    },
+    {
+      "kelas": "Miscellaneous Trash",
+      "jumlah": 495,
+      "persentase": 10.42,
+      "rasio_terhadap_min": 1.56
+    },
+    {
+      "kelas": "Cardboard",
+      "jumlah": 461,
+      "persentase": 9.7,
+      "rasio_terhadap_min": 1.45
+    },
+    {
+      "kelas": "Vegetation",
+      "jumlah": 436,
+      "persentase": 9.18,
+      "rasio_terhadap_min": 1.37
+    },
+    {
+      "kelas": "Glass",
+      "jumlah": 420,
+      "persentase": 8.84,
+      "rasio_terhadap_min": 1.32
+    },
+    {
+      "kelas": "Food Organics",
+      "jumlah": 411,
+      "persentase": 8.65,
+      "rasio_terhadap_min": 1.29
+    },
+    {
+      "kelas": "Textile Trash",
+      "jumlah": 318,
+      "persentase": 6.69,
+      "rasio_terhadap_min": 1.0
+    }
+  ],
+  "ekstensi": {
+    "jpg": 4752
+  },
+  "mode_warna": {
+    "RGB": 4752
+  },
+  "resolusi_unik": 1,
+  "resolusi": [
+    {
+      "lebar": 524,
+      "tinggi": 524,
+      "jumlah": 4752,
+      "rasio": 1.0
+    }
+  ],
+  "berkas_rusak": [],
+  "duplikat_identik_grup": 0,
+  "duplikat_identik_citra": 0,
+  "near_duplicate_pasangan (dhash<=6)": 213,
+  "near_duplicate_lintas_kelas": 128,
+  "ukuran_byte": {
+    "min": 48835,
+    "median": 136988,
+    "max": 248649,
+    "total_MB": 688.31
+  },
+  "brightness": {
+    "min": 107.48,
+    "median": 157.98,
+    "max": 184.92
+  },
+  "brightness_per_kelas": {
+    "Cardboard": 157.08,
+    "Food Organics": 156.74,
+    "Glass": 161.12,
+    "Metal": 155.17,
+    "Miscellaneous Trash": 163.43,
+    "Paper": 152.8,
+    "Plastic": 157.83,
+    "Textile Trash": 157.47,
+    "Vegetation": 162.44
+  },
+  "kontras_per_kelas": {
+    "Cardboard": 46.14,
+    "Food Organics": 47.16,
+    "Glass": 32.83,
+    "Metal": 42.75,
+    "Miscellaneous Trash": 43.43,
+    "Paper": 43.78,
+    "Plastic": 37.55,
+    "Textile Trash": 48.32,
+    "Vegetation": 56.05
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "original_pdf_sha256": "6ad7a31b1618457d408db36127735997d076204d203f618bc4fe1c17c61dc51b",
+  "historical_files_unchanged_against_HEAD": {
+    "data/README.md": "5af4adb1278b80375b87e7c7e29b3bd44999cccec5e54ad41f7b488e9fb0fc4e",
+    "figures/eda_01_distribusi_kelas.png": "1a8684ac7e2edce0f16d8ca8afe62dc0ea6a07e53c454f7cfc20b599361c60bb",
+    "figures/eda_02_kecerahan_ukuran.png": "958b0862910ab111776e72bef8db6ce51d8748dc50466d507a7be2ac65bce1d7",
+    "figures/eda_03_kecerahan_per_kelas.png": "ad157ea4d90b539a43b822543d51120cfa0bacc7ead73df2faf0596add7b8bd6",
+    "figures/eda_04_contoh_per_kelas.png": "2df7cc72f53321709ae4cb0f03e10ae09089b3cd254ce90606bc5256466829b1",
+    "laporan/DL_A_KelompokART_Progres2.pdf": "6ad7a31b1618457d408db36127735997d076204d203f618bc4fe1c17c61dc51b",
+    "notebooks/01_eda_realwaste.ipynb": "102712de1866babd3ef5b691ae82e227fcbcec5a4b8b26393c76de7e97902fe8",
+    "requirements.txt": "c0ee194aa66372dedfffa50c87c0a4e14869111f8987f0aa5995f63057fab972",
+    "results/class_distribution.csv": "f3090640812e665f92487c2ee825319f3006d8d483b41ca0a48fd78dbaad4d55",
+    "results/inventory.csv": "c4fe11e9199cb648e9fd5ab926d6e0d53c7f82c530bdd02103749164cb115c10",
+    "results/near_duplicates.csv": "1f89b4110eedcb2efe599ea6a619f84fc32043f138fa5d7b52b4c600c2c68a12",
+    "results/resolutions.csv": "b584a25034c31dc9f173374fdfaa5782bb4ce00125b94e1ecd12e69d9ca2a1a9",
+    "results/sample_per_kelas.json": "1d9ffe85041765de3aceee1b7831ff094872856f6ca2c9c767863e82c0744739",
+    "results/summary.json": "1321d7ac02bb4d050993b91dd63bac533409f6dc40dcc711b99574d260e150f6",
+    "src/eda_realwaste.py": "28ba3d2da3fec2bff65ab2788f4e9192a36fe5f80516fd873a90238691ca8c75"
+  },
+  "original_pages": 10,
+  "chapter_pages": 7,
+  "merged_pages": 17,
+  "preserved_pages": [
+    {
+      "page": 1,
+      "raster_identical": true,
+      "text_identical": true,
+      "raster_sha256": "bb270480fd4c23a63c9c13d6db2eab7597528ece496570f583a701314907d84f"
+    },
+    {
+      "page": 2,
+      "raster_identical": true,
+      "text_identical": true,
+      "raster_sha256": "90fcafa89917860c92188ba4bf5f56e8ed2d4616702449c19e567a134ca3e8db"
+    },
+    {
+      "page": 3,
+      "raster_identical": true,
+      "text_identical": true,
+      "raster_sha256": "8a318d908d4a52685d248edfda6f80b77009787ed02c86edd64f43ffa8b6d25a"
+    },
+    {
+      "page": 4,
+      "raster_identical": true,
+      "text_identical": true,
+      "raster_sha256": "bcc6171dc04f025d60bf400cc12f70f59665a6a55300777316c97df4156314cb"
+    },
+    {
+      "page": 5,
+      "raster_identical": true,
+      "text_identical": true,
+      "raster_sha256": "03e8b2b84c482f659b173e75ed9391455f3925766e8cd069dff06e5c0887637e"
+    },
+    {
+      "page": 6,
+      "raster_identical": true,
+      "text_identical": true,
+      "raster_sha256": "32d2528eb09af63d5d5c23750a2e230014a45e4e850364e0f86d71eccf98f70d"
+    },
+    {
+      "page": 7,
+      "raster_identical": true,
+      "text_identical": true,
+      "raster_sha256": "829df040dc15cae1cf495b3e6a1312bac27321caf89289453af0de06ec6dc5f2"
+    },
+    {
+      "page": 8,
+      "raster_identical": true,
+      "text_identical": true,
+      "raster_sha256": "98f7dc4d10113552a4b370d03db8f83d83c6a797dbd674d9c5556e054bcae8c8"
+    },
+    {
+      "page": 9,
+      "raster_identical": true,
+      "text_identical": true,
+      "raster_sha256": "1848180d11ecba51bada834eac49a12258452149f91ec5c18389134172241fab"
+    },
+    {
+      "page": 10,
+      "raster_identical": true,
+      "text_identical": true,
+      "raster_sha256": "6d053f2449324ee5c710a89d66dd51bece2b0f1f24603e4734fbe14b4979f41f"
+    }
+  ],
+  "notebook_executed_code_cells": 7,
+  "notebook_errors": 0,
+  "chapter_pagination_valid": true,
+  "chapter_text_inside_page_boundaries": true,
+  "source_excerpts_match": true,
+  "rendering": "LibreOffice 26.8.3 PDF export and render_docx.py PNG QA; PyMuPDF preservation checks",
+  "delivered_chapter_matches_inspected_render": true,
+  "visually_reviewed_chapter_pages": [
+    11,
+    12,
+    13,
+    14,
+    15,
+    16,
+    17
+  ]
+}

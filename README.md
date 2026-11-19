@@ -1,5 +1,93 @@
 # Klasifikasi Jenis Sampah Rumah Tangga pada Citra Dunia Nyata Menggunakan CNN
 
+## Progres 3 — Perancangan dan implementasi awal model
+
+Judul lengkap tetap **Klasifikasi Jenis Sampah Rumah Tangga pada Citra Dunia Nyata Menggunakan CNN:
+Perbandingan Baseline, Augmentasi, dan Transfer Learning**. Progres 3 menambahkan implementasi
+PyTorch, diagram, notebook yang telah dieksekusi, pengujian sintetis CPU, serta BAB III.
+**Belum ada training, tuning, atau evaluasi dataset. Pelatihan dilanjutkan pada Progres 4.**
+Bagian Progres 1–2 di bawah dipertahankan sebagai catatan historis; jadwal tahap selanjutnya
+di sana telah digantikan oleh cakupan Progres 3 ini. Augmentasi dan pembobotan kelas merupakan
+varian eksperimen terkontrol, bukan pengaturan wajib di semua eksperimen.
+
+| Model | Struktur | Parameter total / trainable pada verifikasi |
+| --- | --- | --- |
+| CNN baseline | Conv–ReLU–MaxPool ×3 (32/64/128), adaptive average pooling, Linear 128→64, ReLU, dropout 0,3, Linear 64→9 | 102.089 / 102.089 |
+| MobileNetV3-Small | torchvision features, average pooling, Linear 576→1024, Hardswish, dropout 0,2, Linear 1024→9 | 1.527.081 / 600.073 |
+
+Keduanya menerima `[B,3,128,128]` dan menghasilkan **logits** `[B,9]`. Gunakan
+`nn.CrossEntropyLoss` dengan target integer `torch.long` 0–8; softmax hanya untuk probabilitas
+inferensi. Ini padanan objective sparse categorical crossentropy yang disebut pada BAB II.
+CNN merencanakan skala piksel `[0,1]`; MobileNet memakai skala `[0,1]` diikuti mean/std ImageNet.
+Resize 128 adalah adaptasi proposal terhadap transform bobot standar crop 224, belum dievaluasi.
+
+MobileNet pada verifikasi memakai **bobot acak, tanpa unduhan**, dengan `features` dibekukan
+(termasuk statistik BatchNorm) dan seluruh classifier trainable. IMAGENET1K_V1 direncanakan
+untuk Progres 4; **bobot pretrained belum dimuat**. API `set_trainable_feature_blocks(N)`
+menyiapkan fine-tuning N blok terakhir; buat ulang optimizer setelah mengubah kebijakan.
+
+### Menjalankan bukti Progres 3
+
+Python yang diuji: **3.12.14**, torch **2.7.1+cpu**, torchvision **0.22.1+cpu**. Dependensi model
+terpisah dari `requirements.txt` EDA; versi aktual ada di
+`results/model_design/dependency_versions.json` dan `requirements-model-lock.txt`.
+Tidak ada perubahan driver/CUDA.
+Contoh berikut untuk PowerShell; `python` harus menunjuk interpreter Python 3.12 yang tersedia:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install torch==2.7.1 torchvision==0.22.1 --index-url https://download.pytorch.org/whl/cpu
+python -m pip install -r requirements-model.txt
+
+# Inisialisasi kedua arsitektur tanpa bobot ImageNet
+python -c "from src.models import CNNBaseline, MobileNetV3Small; print(CNNBaseline()); print(MobileNetV3Small(pretrained=False))"
+
+# Forward sintetis, jumlah parameter, finite values, dan freeze policy
+python -m src.verify_models
+python -m pytest -q --junitxml=results/model_design/pytest_results.xml
+
+# Bangun diagram dan eksekusi notebook dengan kernel interpreter aktif
+python scripts/build_model_evidence.py
+# Eksekusi ulang notebook saja
+python scripts/build_model_evidence.py --notebook-only
+```
+
+Perintah verifikasi juga dapat dipanggil sebagai `python src/verify_models.py`. Tidak ada data
+mentah atau bobot ImageNet yang dibutuhkan. Kedua output aktual `[2,9]`, finite, dan berulang
+identik dalam eval mode. **8 pengujian lulus**; detail di XML hasil tes. Pengujian tidak melakukan
+backward atau optimizer step.
+
+| Lokasi | Isi |
+| --- | --- |
+| `src/models/config.py` | Urutan kelas asli dan kebijakan input |
+| `src/models/cnn_baseline.py`, `src/models/mobilenet_v3.py` | Implementasi reusable |
+| `configs/model_initial.yaml` | Usulan loss, optimizer, learning rate, batch size, epoch dan eksperimen |
+| `src/verify_models.py` | Verifikasi CPU dan factory loss/optimizer tanpa training |
+| `results/model_design/` | JSON bukti verifikasi, versi, cuplikan kode, preservasi PDF, dan hasil tes |
+| `figures/cnn_baseline_architecture.png`, `figures/mobilenetv3_small_architecture.png` | Diagram aktual; sumber SVG dengan nama sama |
+| `notebooks/02_model_design.ipynb` | Notebook dengan output eksekusi asli |
+| `laporan/BAB_III_Progres3.docx` | BAB III yang dapat diedit |
+| `laporan/DL_A_KelompokART_Progres3.pdf` | PDF lengkap: 10 halaman asli diikuti BAB III |
+| `docs/progress3_implementation_report.md` | Temuan inspeksi, hasil, reproduksi, dan keterbatasan |
+
+Usulan CNN: Adam lr 0,001, batch 32, maksimum 30 epoch, seed 42. Usulan MobileNet:
+AdamW lr 0,0001, weight decay 0,01, batch 16, maksimum 30 epoch, seed 42, features frozen.
+Nilai ini belum dioptimalkan. Pengaturan monitoring hanya rencana, tidak memuat hasil model.
+
+Untuk membangun ulang laporan, pasang `requirements-report.txt`, jalankan
+`python scripts/build_progress3_report.py`, lalu `python scripts/export_progress3.py`
+dengan LibreOffice tersedia, dan `python scripts/validate_progress3.py`. LibreOffice lokal sesi ini
+tersedia di cache proyek (tidak masuk Git). Alternatif ekspor DOCX ke PDF dapat dilakukan manual;
+simpan sebagai `laporan/BAB_III_Progres3.pdf` sebelum validasi.
+Validator menggabungkan PDF, membandingkan raster dan teks seluruh 10 halaman lama, dan
+memeriksa pagination serta bukti notebook. Halaman BAB I–II tidak ditulis ulang.
+
+Sumber teknis: [MobileNetV3-Small torchvision](https://docs.pytorch.org/vision/stable/models/generated/torchvision.models.mobilenet_v3_small.html),
+[CrossEntropyLoss PyTorch](https://docs.pytorch.org/docs/stable/generated/torch.nn.CrossEntropyLoss.html).
+
+---
+
 Repositori bukti pengerjaan **Progres 1–2** mata kuliah Deep Learning: eksplorasi data (EDA),
 audit kualitas dataset, dan rencana *preprocessing* serta pembagian data untuk klasifikasi
 9 kelas material sampah pada dataset **RealWaste**.

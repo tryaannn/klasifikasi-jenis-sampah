@@ -1,0 +1,47 @@
+phase: progress3_design_only
+seed: 42
+classes:
+  - Cardboard
+  - Food Organics
+  - Glass
+  - Metal
+  - Miscellaneous Trash
+  - Paper
+  - Plastic
+  - Textile Trash
+  - Vegetation
+models:
+  cnn_baseline:
+    input_size: [128, 128]
+    num_classes: 9
+    normalization: {pixel_scale: [0, 1]}
+    dropout: 0.3
+    loss: CrossEntropyLoss
+    optimizer: Adam
+    learning_rate: 0.001
+    weight_decay: 0.0
+    batch_size: 32
+    max_epochs_planned: 30
+    pretrained_weights: null
+  mobilenet_v3_small:
+    input_size: [128, 128]
+    num_classes: 9
+    normalization:
+      pixel_scale: [0, 1]
+      mean: [0.485, 0.456, 0.406]
+      std: [0.229, 0.224, 0.225]
+    loss: CrossEntropyLoss
+    optimizer: AdamW
+    learning_rate: 0.0001
+    weight_decay: 0.01
+    batch_size: 16
+    max_epochs_planned: 30
+    freeze_backbone: true
+    pretrained_weights_planned: IMAGENET1K_V1
+    pretrained_weights_verification: null
+controlled_experiments_progress4:
+  augmentation: false
+  class_weighting: false
+  note: Compare disabled/enabled variants; derive class weights from training only.
+monitoring_planned: [loss, accuracy, macro_precision, macro_recall, macro_f1]
+final_evaluation_planned: [confusion_matrix, train_validation_gap, training_time, Grad-CAM]

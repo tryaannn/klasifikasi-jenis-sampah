@@ -1,0 +1,5 @@
+# Optional document build and visual QA, separate from the EDA/model environments.
+python-docx>=1.1,<2
+pypdf>=5,<7
+reportlab>=4,<5
+pymupdf>=1.25,<2

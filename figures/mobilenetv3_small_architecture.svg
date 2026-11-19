@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN"
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg xmlns:xlink="http://www.w3.org/1999/xlink" width="466.38pt" height="350.3664pt" viewBox="0 0 466.38 350.3664" xmlns="http://www.w3.org/2000/svg" version="1.1">
+ <metadata>
+  <rdf:RDF xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cc="http://creativecommons.org/ns#" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#">
+   <cc:Work>
+    <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+    <dc:date>2026-11-18T17:18:04.943636</dc:date>
+    <dc:format>image/svg+xml</dc:format>
+    <dc:creator>
+     <cc:Agent>
+      <dc:title>Matplotlib v3.11.2, https://matplotlib.org/</dc:title>
+     </cc:Agent>
+    </dc:creator>
+   </cc:Work>
+  </rdf:RDF>
+ </metadata>
+ <defs>
+  <style type="text/css">*{stroke-linejoin: round; stroke-linecap: butt}</style>
+ </defs>
+ <g id="figure_1">
+  <g id="patch_1">
+   <path d="M 0 350.3664 
+L 466.38 350.3664 
+L 466.38 0 
+L 0 0 
+z
+" style="fill: #ffffff"/>
+  </g>
+  <g id="axes_1">
+   <g id="patch_2">
+    <path d="M 18.4995 87.75098 
+L 447.8805 87.75098 
+Q 449.68842 87.75098 449.68842 86.131865 
+L 449.68842 48.487437 
+Q 449.68842 46.868322 447.8805 46.868322 
+L 18.4995 46.868322 
+Q 16.69158 46.868322 16.69158 48.487437 
+L 16.69158 86.131865 
+Q 16.69158 87.75098 18.4995 87.75098 
+z
+" clip-path="url(#pc5e978d5b9)" style="fill: #ecf4fb; stroke: #345878; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_3">
+    <path d="M 18.4995 138.34833 
+L 447.8805 138.34833 
+Q 449.68842 138.34833 449.68842 136.729214 
+L 449.68842 99.084787 
+Q 449.68842 97.465671 447.8805 97.465671 
+L 18.4995 97.465671 
+Q 16.69158 97.465671 16.69158 99.084787 
+L 16.69158 136.729214 
+Q 16.69158 138.34833 18.4995 138.34833 
+z
+" clip-path="url(#pc5e978d5b9)" style="fill: #ecf4fb; stroke: #345878; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_4">
+    <path d="M 18.4995 188.945679 
+L 447.8805 188.945679 
+Q 449.68842 188.945679 449.68842 187.326564 
+L 449.68842 149.682136 
+Q 449.68842 148.063021 447.8805 148.063021 
+L 18.4995 148.063021 
+Q 16.69158 148.063021 16.69158 149.682136 
+L 16.69158 187.326564 
+Q 16.69158 188.945679 18.4995 188.945679 
+z
+" clip-path="url(#pc5e978d5b9)" style="fill: #ecf4fb; stroke: #345878; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_5">
+    <path d="M 18.4995 239.543028 
+L 447.8805 239.543028 
+Q 449.68842 239.543028 449.68842 237.923913 
+L 449.68842 200.279485 
+Q 449.68842 198.66037 447.8805 198.66037 
+L 18.4995 198.66037 
+Q 16.69158 198.66037 16.69158 200.279485 
+L 16.69158 237.923913 
+Q 16.69158 239.543028 18.4995 239.543028 
+z
+" clip-path="url(#pc5e978d5b9)" style="fill: #ecf4fb; stroke: #345878; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_6">
+    <path d="M 18.4995 290.140378 
+L 447.8805 290.140378 
+Q 449.68842 290.140378 449.68842 288.521263 
+L 449.68842 250.876835 
+Q 449.68842 249.25772 447.8805 249.25772 
+L 18.4995 249.25772 
+Q 16.69158 249.25772 16.69158 250.876835 
+L 16.69158 288.521263 
+Q 16.69158 290.140378 18.4995 290.140378 
+z
+" clip-path="url(#pc5e978d5b9)" style="fill: #ecf4fb; stroke: #345878; stroke-linejoin: miter"/>
+   </g>
+   <g id="patch_7">
+    <path d="M 18.4995 340.737727 
+L 447.8805 340.737727 
+Q 449.68842 340.737727 449.68842 339.118612 
+L 449.68842 301.474184 
+Q 449.68842 299.855069 447.8805 299.855069 
+L 18.4995 299.855069 
+Q 16.69158 299.855069 16.69158 301.474184 
+L 16.69158 339.118612 
+Q 16.69158 340.737727 18.4995 340.737727 
+z
+" clip-path="url(#pc5e978d5b9)" style="fill: #fff4de; stroke: #345878; stroke-linejoin: miter"/>
+   </g>
+   <g id="text_1">
+    <text style="font-weight: 700; font-size: 15px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="233.19" y="23.391152" transform="rotate(-0 233.19 23.391152)">MobileNetV3-Small transfer learning</text>
+   </g>
+   <g id="text_2">
+    <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="233.19" y="61.869108" transform="rotate(-0 233.19 61.869108)">Input RGB</text>
+   </g>
+   <g id="text_3">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="233.19" y="77.013202" transform="rotate(-0 233.19 77.013202)">[B, 3, 128, 128] | normalisasi mean–std ImageNet</text>
+   </g>
+   <g id="patch_8">
+    <path d="M 233.19 89.341832 
+Q 233.19 91.997188 233.19 93.087296 
+" style="fill: none; stroke: #345878; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 235.19 89.087296 
+L 233.19 93.087296 
+L 231.19 89.087296 
+" style="fill: none; stroke: #345878; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_4">
+    <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="233.19" y="112.466887" transform="rotate(-0 233.19 112.466887)">Feature extractor torchvision (frozen)</text>
+   </g>
+   <g id="text_5">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(115.526719 121.565434)">Conv awal + 11 inverted residual + Conv akhir</text>
+    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif" transform="translate(154.84 133.611918)">13 blok features | [B, 576, 4, 4]</text>
+   </g>
+   <g id="patch_9">
+    <path d="M 233.19 139.939181 
+Q 233.19 142.594537 233.19 143.684645 
+" style="fill: none; stroke: #345878; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 235.19 139.684645 
+L 233.19 143.684645 
+L 231.19 139.684645 
+" style="fill: none; stroke: #345878; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_6">
+    <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="233.19" y="163.064236" transform="rotate(-0 233.19 163.064236)">Feature pooling</text>
+   </g>
+   <g id="text_7">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="233.19" y="178.207901" transform="rotate(-0 233.19 178.207901)">AdaptiveAvgPool 1×1 → Flatten | [B, 576]</text>
+   </g>
+   <g id="patch_10">
+    <path d="M 233.19 190.536531 
+Q 233.19 193.191887 233.19 194.281995 
+" style="fill: none; stroke: #345878; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 235.19 190.281995 
+L 233.19 194.281995 
+L 231.19 190.281995 
+" style="fill: none; stroke: #345878; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_8">
+    <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="233.19" y="213.661586" transform="rotate(-0 233.19 213.661586)">Classification head</text>
+   </g>
+   <g id="text_9">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="233.19" y="228.80525" transform="rotate(-0 233.19 228.80525)">Linear 576→1024 | Hardswish | Dropout p=0,2</text>
+   </g>
+   <g id="patch_11">
+    <path d="M 233.19 241.13388 
+Q 233.19 243.789236 233.19 244.879344 
+" style="fill: none; stroke: #345878; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 235.19 240.879344 
+L 233.19 244.879344 
+L 231.19 240.879344 
+" style="fill: none; stroke: #345878; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_10">
+    <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="233.19" y="264.258935" transform="rotate(-0 233.19 264.258935)">Keluaran model</text>
+   </g>
+   <g id="text_11">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="233.19" y="279.402599" transform="rotate(-0 233.19 279.402599)">Linear pengganti 1024→9 | logits [B, 9]</text>
+   </g>
+   <g id="patch_12">
+    <path d="M 233.19 291.73123 
+Q 233.19 294.386585 233.19 295.476693 
+" style="fill: none; stroke: #345878; stroke-width: 1.4; stroke-linecap: round"/>
+    <path d="M 235.19 291.476693 
+L 233.19 295.476693 
+L 231.19 291.476693 
+" style="fill: none; stroke: #345878; stroke-width: 1.4; stroke-linecap: round"/>
+   </g>
+   <g id="text_12">
+    <text style="font-weight: 700; font-size: 11px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="233.19" y="314.856284" transform="rotate(-0 233.19 314.856284)">Konversi saat inferensi</text>
+   </g>
+   <g id="text_13">
+    <text style="font-size: 10px; font-family: 'DejaVu Sans', 'Bitstream Vera Sans', 'Computer Modern Sans Serif', 'Lucida Grande', 'Verdana', 'Geneva', 'Lucid', 'Arial', 'Helvetica', 'Avant Garde', sans-serif; text-anchor: middle" x="233.19" y="329.999949" transform="rotate(-0 233.19 329.999949)">Softmax(dim=1) | probabilitas [B, 9]</text>
+   </g>
+  </g>
+ </g>
+ <defs>
+  <clipPath id="pc5e978d5b9">
+   <rect x="7.2" y="7.2" width="451.98" height="335.9664"/>
+  </clipPath>
+ </defs>
+</svg>

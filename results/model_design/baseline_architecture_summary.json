@@ -1,0 +1,19 @@
+{
+  "input_shape": [
+    2,
+    3,
+    128,
+    128
+  ],
+  "output_shape": [
+    2,
+    9
+  ],
+  "finite_outputs": true,
+  "deterministic_eval": true,
+  "total_parameters": 102089,
+  "trainable_parameters": 102089,
+  "backbone_frozen": null,
+  "pretrained_weights_loaded": false,
+  "architecture": "CNNBaseline(\n  (features): Sequential(\n    (0): Conv2d(3, 32, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))\n    (1): ReLU()\n    (2): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)\n    (3): Conv2d(32, 64, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))\n    (4): ReLU()\n    (5): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)\n    (6): Conv2d(64, 128, kernel_size=(3, 3), stride=(1, 1), padding=(1, 1))\n    (7): ReLU()\n    (8): MaxPool2d(kernel_size=2, stride=2, padding=0, dilation=1, ceil_mode=False)\n  )\n  (classifier): Sequential(\n    (0): AdaptiveAvgPool2d(output_size=1)\n    (1): Flatten(start_dim=1, end_dim=-1)\n    (2): Linear(in_features=128, out_features=64, bias=True)\n    (3): ReLU()\n    (4): Dropout(p=0.3, inplace=False)\n    (5): Linear(in_features=64, out_features=9, bias=True)\n  )\n)"
+}

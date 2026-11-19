@@ -16,3 +16,8 @@ venv/
 .DS_Store
 Thumbs.db
 ~$*
+
+# isolated tools, caches and report visual QA
+.cache/
+.pytest_cache/
+tmp/

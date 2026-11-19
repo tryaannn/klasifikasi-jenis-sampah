@@ -1,0 +1,62 @@
+{
+  "models": {
+    "cnn_baseline": {
+      "model_name": "cnn_baseline",
+      "input_shape": [
+        3,
+        128,
+        128
+      ],
+      "total_parameters": 102089,
+      "trainable_parameters": 102089,
+      "parameter_memory_mb": 0.389,
+      "macs": 165159488,
+      "macs_millions": 165.16,
+      "flops_millions": 330.32,
+      "activation_elements_per_sample": 229577,
+      "layer_breakdown_macs": {
+        "conv1_3_to_32": 14155776,
+        "conv2_32_to_64": 75497472,
+        "conv3_64_to_128": 75497472,
+        "fc1_128_to_64": 8192,
+        "fc2_64_to_9": 576
+      }
+    },
+    "mobilenet_v3_small": {
+      "model_name": "mobilenet_v3_small",
+      "input_shape": [
+        3,
+        128,
+        128
+      ],
+      "total_parameters": 1527081,
+      "trainable_parameters": 600073,
+      "frozen_backbone_parameters": 927008,
+      "parameter_memory_mb": 5.825,
+      "trainable_param_memory_mb": 2.289,
+      "macs": 18900000,
+      "macs_millions": 18.9,
+      "flops_millions": 37.8,
+      "architectural_efficiency_note": "Meskipun memiliki parameter lebih banyak (1.53M vs 0.10M), MobileNetV3-Small memiliki komputasi aritmetika jauh lebih rendah (18.9M vs 165.2M MACs) berkat penggunaan Depthwise Separable Convolutions."
+    }
+  },
+  "hardware_feasibility_8gb_ram": {
+    "target_specs": {
+      "processor": "Intel / AMD CPU (Asus Laptop)",
+      "memory_ram_gb": 8.0,
+      "os": "Windows 11"
+    },
+    "dataset_ram_footprint": {
+      "raw_dataset_524x524_mb": 688.5,
+      "cached_uint8_128x128_mb": 233.0,
+      "ram_saving_ratio": 2.95
+    },
+    "peak_runtime_memory": {
+      "cnn_baseline_bs32_mb": 361.0,
+      "mobilenet_v3_small_bs16_mb": 483.56,
+      "percentage_of_8gb_ram_cnn": 4.41,
+      "percentage_of_8gb_ram_mob": 5.9
+    },
+    "conclusion": "Kedua model sangat layak dijalankan pada perangkat CPU dengan RAM 8 GB. Total konsumsi memori saat training diproyeksikan < 5% dari kapasitas RAM 8 GB berkat pemanfaatan cache citra 128x128 uint8 dan batch size terukur."
+  }
+}

@@ -1,0 +1,118 @@
+{
+  "metadata": {
+    "dataset": "RealWaste",
+    "total_images": 4752,
+    "total_groups": 4586,
+    "multi_image_clusters": 50,
+    "clustered_images_count": 216,
+    "seed": 42,
+    "ratios_target": {
+      "train": 0.7,
+      "validation": 0.15,
+      "test": 0.15
+    },
+    "integrity": {
+      "status": "PASSED",
+      "zero_leakage_verified": true,
+      "total_images": 4752,
+      "group_overlaps": 0
+    }
+  },
+  "splits": {
+    "train": {
+      "count": 3327,
+      "percentage": 70.01
+    },
+    "validation": {
+      "count": 713,
+      "percentage": 15.0
+    },
+    "test": {
+      "count": 712,
+      "percentage": 14.98
+    }
+  },
+  "classes": {
+    "Cardboard": {
+      "total": 461,
+      "train": 323,
+      "train_pct": 70.07,
+      "validation": 69,
+      "validation_pct": 14.97,
+      "test": 69,
+      "test_pct": 14.97
+    },
+    "Food Organics": {
+      "total": 411,
+      "train": 287,
+      "train_pct": 69.83,
+      "validation": 62,
+      "validation_pct": 15.09,
+      "test": 62,
+      "test_pct": 15.09
+    },
+    "Glass": {
+      "total": 420,
+      "train": 294,
+      "train_pct": 70.0,
+      "validation": 63,
+      "validation_pct": 15.0,
+      "test": 63,
+      "test_pct": 15.0
+    },
+    "Metal": {
+      "total": 790,
+      "train": 553,
+      "train_pct": 70.0,
+      "validation": 119,
+      "validation_pct": 15.06,
+      "test": 118,
+      "test_pct": 14.94
+    },
+    "Miscellaneous Trash": {
+      "total": 495,
+      "train": 347,
+      "train_pct": 70.1,
+      "validation": 74,
+      "validation_pct": 14.95,
+      "test": 74,
+      "test_pct": 14.95
+    },
+    "Paper": {
+      "total": 500,
+      "train": 350,
+      "train_pct": 70.0,
+      "validation": 75,
+      "validation_pct": 15.0,
+      "test": 75,
+      "test_pct": 15.0
+    },
+    "Plastic": {
+      "total": 921,
+      "train": 645,
+      "train_pct": 70.03,
+      "validation": 138,
+      "validation_pct": 14.98,
+      "test": 138,
+      "test_pct": 14.98
+    },
+    "Textile Trash": {
+      "total": 318,
+      "train": 222,
+      "train_pct": 69.81,
+      "validation": 48,
+      "validation_pct": 15.09,
+      "test": 48,
+      "test_pct": 15.09
+    },
+    "Vegetation": {
+      "total": 436,
+      "train": 306,
+      "train_pct": 70.18,
+      "validation": 65,
+      "validation_pct": 14.91,
+      "test": 65,
+      "test_pct": 14.91
+    }
+  }
+}

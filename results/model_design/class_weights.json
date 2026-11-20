@@ -1,0 +1,57 @@
+{
+  "metadata": {
+    "source_split": "train_only",
+    "total_training_samples": 3327,
+    "num_classes": 9,
+    "anti_leakage_guarantee": "No validation or test labels used in calculation"
+  },
+  "class_counts_train": {
+    "Cardboard": 323,
+    "Food Organics": 287,
+    "Glass": 294,
+    "Metal": 553,
+    "Miscellaneous Trash": 347,
+    "Paper": 350,
+    "Plastic": 645,
+    "Textile Trash": 222,
+    "Vegetation": 306
+  },
+  "inverse_class_frequency_weights": {
+    "raw": {
+      "Cardboard": 1.1445,
+      "Food Organics": 1.288,
+      "Glass": 1.2574,
+      "Metal": 0.6685,
+      "Miscellaneous Trash": 1.0653,
+      "Paper": 1.0562,
+      "Plastic": 0.5731,
+      "Textile Trash": 1.6652,
+      "Vegetation": 1.2081
+    },
+    "normalized_mean_1": {
+      "Cardboard": 1.0377,
+      "Food Organics": 1.1678,
+      "Glass": 1.14,
+      "Metal": 0.6061,
+      "Miscellaneous Trash": 0.9659,
+      "Paper": 0.9576,
+      "Plastic": 0.5196,
+      "Textile Trash": 1.5098,
+      "Vegetation": 1.0953
+    }
+  },
+  "effective_number_weights_beta_0999": {
+    "normalized_mean_1": {
+      "Cardboard": 1.0309,
+      "Food Organics": 1.1405,
+      "Glass": 1.1171,
+      "Metal": 0.6699,
+      "Miscellaneous Trash": 0.9705,
+      "Paper": 0.9636,
+      "Plastic": 0.5987,
+      "Textile Trash": 1.4293,
+      "Vegetation": 1.0794
+    }
+  },
+  "pytorch_weight_tensor_code": "torch.tensor([1.0377, 1.1678, 1.14, 0.6061, 0.9659, 0.9576, 0.5196, 1.5098, 1.0953], dtype=torch.float32)"
+}

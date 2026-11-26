@@ -75,7 +75,7 @@ def test_end_to_end_progress4_smoke(tmp_path: Path) -> None:
     fig_dir = tmp_path / "figures_p4"
 
     summaries = run_all_experiments(
-        ["exp01", "exp02", "exp03", "exp04"],
+        ["all"],
         data_dir=raw_dir,
         split_path=split_path,
         cache_path=cache_path,
@@ -87,7 +87,7 @@ def test_end_to_end_progress4_smoke(tmp_path: Path) -> None:
         seed=42,
     )
 
-    assert len(summaries) == 4
+    assert len(summaries) == 7
     assert all(not s["dataset_counts"]["test_used"] for s in summaries)
     assert (out_dir / "experiment_comparison.json").is_file()
     assert (out_dir / "experiment_comparison.csv").is_file()

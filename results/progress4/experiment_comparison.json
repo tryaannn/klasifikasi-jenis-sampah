@@ -1,0 +1,54 @@
+[
+  {
+    "exp_id": "exp01_cnn_control",
+    "title": "EXP-01: CNN Baseline Kontrol",
+    "model_name": "cnn_baseline",
+    "augment": false,
+    "class_weighting": false,
+    "best_epoch": 30,
+    "epochs_ran": 30,
+    "best_val_loss": 1.41307,
+    "best_val_accuracy": 0.493689,
+    "best_val_macro_f1": 0.489959,
+    "total_training_seconds": 111.35
+  },
+  {
+    "exp_id": "exp02_cnn_aug",
+    "title": "EXP-02: CNN Baseline + Augmentasi",
+    "model_name": "cnn_baseline",
+    "augment": true,
+    "class_weighting": false,
+    "best_epoch": 29,
+    "epochs_ran": 30,
+    "best_val_loss": 1.604104,
+    "best_val_accuracy": 0.42777,
+    "best_val_macro_f1": 0.409552,
+    "total_training_seconds": 229.2
+  },
+  {
+    "exp_id": "exp03_cnn_weighted",
+    "title": "EXP-03: CNN Baseline + Class Weighting",
+    "model_name": "cnn_baseline",
+    "augment": false,
+    "class_weighting": true,
+    "best_epoch": 19,
+    "epochs_ran": 27,
+    "best_val_loss": 1.446555,
+    "best_val_accuracy": 0.485273,
+    "best_val_macro_f1": 0.485503,
+    "total_training_seconds": 94.81
+  },
+  {
+    "exp_id": "exp04_mobilenet_tl",
+    "title": "EXP-04: MobileNetV3-Small Transfer Learning",
+    "model_name": "mobilenet_v3_small",
+    "augment": false,
+    "class_weighting": false,
+    "best_epoch": 30,
+    "epochs_ran": 30,
+    "best_val_loss": 1.054558,
+    "best_val_accuracy": 0.712482,
+    "best_val_macro_f1": 0.719335,
+    "total_training_seconds": 97.1
+  }
+]

@@ -1,7 +1,8 @@
 """Progress 4 validation-only evaluation & visual generator (BAB IV evidence).
 
-Strictly evaluates the held-out VALIDATION set (713 images) using checkpoints saved
-by src.train. Test set access is explicitly blocked until Progress 5.
+Strictly evaluates the held-out VALIDATION set (713 images) across all initial
+and mitigation experiments (EXP-01..EXP-07) saved by src.train.
+Test set access is explicitly blocked until Progress 5.
 """
 from __future__ import annotations
 
@@ -20,7 +21,7 @@ from torch.utils.data import DataLoader
 from .dataset import DEFAULT_SPLIT_PATH, RealWasteDataset, load_uint8_cache
 from .models import CLASS_NAMES, CNNBaseline, MobileNetV3Small, NUM_CLASSES
 from .models.config import ROOT
-from .train import DEFAULT_OUTPUT_DIR, compute_classification_metrics
+from .train import DEFAULT_OUTPUT_DIR, compute_classification_metrics, write_comparison_table
 
 
 def _load_model_from_checkpoint(ckpt_path: Path, device: torch.device) -> tuple[torch.nn.Module, dict[str, Any]]:
@@ -30,6 +31,9 @@ def _load_model_from_checkpoint(ckpt_path: Path, device: torch.device) -> tuple[
         model = CNNBaseline(num_classes=NUM_CLASSES, dropout=float(ckpt.get("dropout", 0.3)))
     elif model_name == "mobilenet_v3_small":
         model = MobileNetV3Small(num_classes=NUM_CLASSES, pretrained=False, freeze_backbone=True)
+        unfreeze_n = int(ckpt.get("unfreeze_last_n", 0))
+        if unfreeze_n > 0:
+            model.set_trainable_feature_blocks(unfreeze_n)
     else:
         raise ValueError(f"Unknown model_name in checkpoint: {model_name}")
     model.load_state_dict(ckpt["model_state_dict"])
@@ -41,68 +45,128 @@ def plot_training_curves(
     exp_histories: dict[str, dict[str, Any]],
     figures_dir: Path,
 ) -> tuple[Path, Path]:
-    """Generate Gambar 4.1 (Accuracy & Macro F1) and Gambar 4.2 (Loss) from actual epoch logs."""
+    """Generate Gambar 4.1 (Accuracy & Macro F1) and Gambar 4.2 (Loss) across all experiments."""
     figures_dir.mkdir(parents=True, exist_ok=True)
+    palette = {
+        "exp01_cnn_control": ("#64748B", "--"),
+        "exp02_cnn_aug": ("#F59E0B", "--"),
+        "exp03_cnn_weighted": ("#10B981", "--"),
+        "exp04_mobilenet_tl": ("#DC2626", "-"),
+        "exp05_mobilenet_aug_reg": ("#2563EB", "-"),
+        "exp06_mobilenet_finetune": ("#7C3AED", "-"),
+        "exp07_cnn_mitigation": ("#0D9488", ":"),
+    }
 
-    # Gambar 4.1: Validation Macro F1 & Train/Val Accuracy
-    fig, axes = plt.subplots(1, 2, figsize=(13, 4.8), dpi=300)
+    # Gambar 4.1: Validation Accuracy & Validation Macro F1
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5.2), dpi=300)
     for exp_id, payload in exp_histories.items():
         hist = payload["history"]
         epochs = [h["epoch"] for h in hist]
         val_acc = [h["val_accuracy"] * 100 for h in hist]
         val_f1 = [h["val_macro_f1"] * 100 for h in hist]
+        color, ls = palette.get(exp_id, ("#334155", "-"))
+        lw = 2.1 if ls == "-" else 1.5
         label = payload["title"]
-        axes[0].plot(epochs, val_acc, marker="o", markersize=3, linewidth=1.8, label=label)
-        axes[1].plot(epochs, val_f1, marker="s", markersize=3, linewidth=1.8, label=label)
+        axes[0].plot(epochs, val_acc, color=color, linestyle=ls, marker="o", markersize=2.5, linewidth=lw, label=label)
+        axes[1].plot(epochs, val_f1, color=color, linestyle=ls, marker="s", markersize=2.5, linewidth=lw, label=label)
 
     axes[0].set_title("Validation Accuracy per Epoch (%)", fontweight="bold", fontsize=10.5)
     axes[0].set_xlabel("Epoch")
     axes[0].set_ylabel("Accuracy (%)")
     axes[0].grid(True, linestyle="--", alpha=0.4)
-    axes[0].legend(fontsize=8)
+    axes[0].legend(fontsize=7.5, loc="lower right")
 
     axes[1].set_title("Validation Macro F1-Score per Epoch (%)", fontweight="bold", fontsize=10.5)
     axes[1].set_xlabel("Epoch")
     axes[1].set_ylabel("Macro F1-Score (%)")
     axes[1].grid(True, linestyle="--", alpha=0.4)
-    axes[1].legend(fontsize=8)
+    axes[1].legend(fontsize=7.5, loc="lower right")
 
-    plt.suptitle("Gambar 4.1 Kurva Akurasi dan Macro F1 Validasi Antar-Eksperimen (Progres 4)", fontweight="bold", y=1.02)
+    plt.suptitle("Gambar 4.1 Kurva Akurasi dan Macro F1 Validasi (Eksperimen Awal & Mitigasi)", fontweight="bold", y=1.02)
     plt.tight_layout()
     acc_fig = figures_dir / "p4_training_accuracy_f1_curves.png"
     plt.savefig(acc_fig, bbox_inches="tight")
     plt.close()
 
     # Gambar 4.2: Train Loss vs Validation Loss
-    fig, axes = plt.subplots(1, 2, figsize=(13, 4.8), dpi=300)
+    fig, axes = plt.subplots(1, 2, figsize=(14, 5.2), dpi=300)
     for exp_id, payload in exp_histories.items():
         hist = payload["history"]
         epochs = [h["epoch"] for h in hist]
         tr_loss = [h["train_loss"] for h in hist]
         va_loss = [h["val_loss"] for h in hist]
+        color, ls = palette.get(exp_id, ("#334155", "-"))
+        lw = 2.1 if ls == "-" else 1.5
         label = payload["title"]
-        axes[0].plot(epochs, tr_loss, marker="o", markersize=3, linewidth=1.8, label=label)
-        axes[1].plot(epochs, va_loss, marker="s", markersize=3, linewidth=1.8, label=label)
+        axes[0].plot(epochs, tr_loss, color=color, linestyle=ls, marker="o", markersize=2.5, linewidth=lw, label=label)
+        axes[1].plot(epochs, va_loss, color=color, linestyle=ls, marker="s", markersize=2.5, linewidth=lw, label=label)
 
     axes[0].set_title("Training Loss per Epoch", fontweight="bold", fontsize=10.5)
     axes[0].set_xlabel("Epoch")
     axes[0].set_ylabel("Cross-Entropy Loss")
     axes[0].grid(True, linestyle="--", alpha=0.4)
-    axes[0].legend(fontsize=8)
+    axes[0].legend(fontsize=7.5, loc="upper right")
 
     axes[1].set_title("Validation Loss per Epoch", fontweight="bold", fontsize=10.5)
     axes[1].set_xlabel("Epoch")
     axes[1].set_ylabel("Cross-Entropy Loss")
     axes[1].grid(True, linestyle="--", alpha=0.4)
-    axes[1].legend(fontsize=8)
+    axes[1].legend(fontsize=7.5, loc="upper right")
 
-    plt.suptitle("Gambar 4.2 Kurva Training dan Validation Loss Antar-Eksperimen (Progres 4)", fontweight="bold", y=1.02)
+    plt.suptitle("Gambar 4.2 Kurva Training dan Validation Loss (Eksperimen Awal & Mitigasi)", fontweight="bold", y=1.02)
     plt.tight_layout()
     loss_fig = figures_dir / "p4_training_loss_curves.png"
     plt.savefig(loss_fig, bbox_inches="tight")
     plt.close()
 
     return acc_fig, loss_fig
+
+
+def plot_train_val_gap_comparison(
+    comparison_rows: list[dict[str, Any]],
+    figures_dir: Path,
+) -> Path:
+    """Generate Gambar 4.5 comparing Train Acc, Val Acc, and Train-Val Gap across experiments."""
+    labels = [r["exp_id"].split("_")[0].upper() + "\n" + ("CNN" if "cnn" in r["model_name"] else "MobV3") for r in comparison_rows]
+    tr_acc = [r["best_train_accuracy"] * 100 for r in comparison_rows]
+    va_acc = [r["best_val_accuracy"] * 100 for r in comparison_rows]
+    va_f1 = [r["best_val_macro_f1"] * 100 for r in comparison_rows]
+    gaps = [r["train_val_acc_gap"] * 100 for r in comparison_rows]
+
+    x = np.arange(len(labels))
+    w = 0.25
+    fig, axes = plt.subplots(1, 2, figsize=(13.5, 4.8), dpi=300)
+
+    axes[0].bar(x - w, tr_acc, width=w, label="Train Acc (%)", color="#94A3B8")
+    axes[0].bar(x, va_acc, width=w, label="Val Acc (%)", color="#2563EB")
+    axes[0].bar(x + w, va_f1, width=w, label="Val Macro F1 (%)", color="#1E3A8A")
+    axes[0].set_xticks(x)
+    axes[0].set_xticklabels(labels, fontsize=8.5)
+    axes[0].set_ylim(0, 110)
+    axes[0].set_ylabel("Skor (%)")
+    axes[0].set_title("Perbandingan Train vs Validation & Macro F1", fontweight="bold", fontsize=10.5)
+    axes[0].grid(True, axis="y", linestyle="--", alpha=0.4)
+    axes[0].legend(fontsize=8)
+
+    bar_colors = ["#DC2626" if g > 15 else ("#F59E0B" if g > 8 else "#10B981") for g in gaps]
+    bars = axes[1].bar(x, gaps, width=0.5, color=bar_colors)
+    axes[1].axhline(10.0, color="#64748B", linestyle="--", linewidth=1.0, label="Batas Ideal Gap (<10%)")
+    for b, g in zip(bars, gaps):
+        axes[1].text(b.get_x() + b.get_width() / 2, b.get_height() + 0.6, f"{g:.1f}%", ha="center", va="bottom", fontsize=8)
+    axes[1].set_xticks(x)
+    axes[1].set_xticklabels(labels, fontsize=8.5)
+    axes[1].set_ylim(0, max(35.0, max(gaps) + 5.0))
+    axes[1].set_ylabel("Gap Train - Val Accuracy (%)")
+    axes[1].set_title("Analisis Penekanan Overfitting (Train–Validation Gap)", fontweight="bold", fontsize=10.5)
+    axes[1].grid(True, axis="y", linestyle="--", alpha=0.4)
+    axes[1].legend(fontsize=8)
+
+    plt.suptitle("Evaluasi Dampak Eksperimen Mitigasi Overfitting dan Underfitting", fontweight="bold", y=1.02)
+    plt.tight_layout()
+    gap_fig = figures_dir / "p4_train_val_gap_comparison.png"
+    plt.savefig(gap_fig, bbox_inches="tight")
+    plt.close()
+    return gap_fig
 
 
 def plot_validation_diagnostics(
@@ -186,6 +250,7 @@ def evaluate_validation(
 ) -> dict[str, Any]:
     """Evaluate all trained Progress 4 experiments strictly on validation split."""
     results_dir = Path(results_dir)
+    comparison_rows = write_comparison_table(results_dir)
     exp_dirs = sorted(p for p in results_dir.iterdir() if p.is_dir() and (p / "summary.json").is_file())
     if not exp_dirs:
         raise FileNotFoundError(f"No completed experiments found under {results_dir}")
@@ -206,6 +271,7 @@ def evaluate_validation(
 
     assert best_exp_dir is not None
     acc_fig, loss_fig = plot_training_curves(exp_histories, Path(figures_dir))
+    gap_fig = plot_train_val_gap_comparison(comparison_rows, Path(figures_dir))
 
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     model, ckpt = _load_model_from_checkpoint(best_exp_dir / "best_model.pt", device)
@@ -219,7 +285,7 @@ def evaluate_validation(
         split_path=split_path,
         cache_path=cache_path,
         preloaded_cache=preloaded,
-        allow_test=False,  # Explicit anti-leakage guard for Progress 4
+        allow_test=False,
     )
     val_loader = DataLoader(val_ds, batch_size=32, shuffle=False, num_workers=0)
 
@@ -239,7 +305,6 @@ def evaluate_validation(
     metrics = compute_classification_metrics(np.asarray(all_targets), np.asarray(all_preds))
     cm_fig, cls_fig = plot_validation_diagnostics(metrics, best_summary["spec"]["title"], Path(figures_dir))
 
-    # Extract 5 correct and 5 misclassified samples for BAB IV section 4.3 table
     sample_rows = []
     for (rel_path, _), t_idx, p_idx, conf in zip(val_ds.records, all_targets, all_preds, all_confs):
         sample_rows.append({
@@ -273,6 +338,7 @@ def evaluate_validation(
             "loss_curves": str(loss_fig),
             "val_confusion_matrix": str(cm_fig),
             "val_per_class_metrics": str(cls_fig),
+            "train_val_gap_comparison": str(gap_fig),
         },
     }
     out_json = results_dir / "val_best_model_evaluation.json"

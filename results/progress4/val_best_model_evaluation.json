@@ -1,0 +1,256 @@
+{
+  "evaluation_split": "validation_only",
+  "test_set_untouched": true,
+  "validation_count": 713,
+  "best_experiment": {
+    "exp_id": "exp04_mobilenet_tl",
+    "title": "EXP-04: MobileNetV3-Small Transfer Learning",
+    "model_name": "mobilenet_v3_small",
+    "best_epoch": 30
+  },
+  "metrics": {
+    "accuracy": 0.712482,
+    "macro_precision": 0.721797,
+    "macro_recall": 0.727128,
+    "macro_f1": 0.719335,
+    "confusion_matrix": [
+      [
+        38,
+        2,
+        2,
+        6,
+        1,
+        8,
+        7,
+        3,
+        2
+      ],
+      [
+        1,
+        45,
+        1,
+        1,
+        2,
+        0,
+        7,
+        4,
+        1
+      ],
+      [
+        0,
+        0,
+        54,
+        1,
+        0,
+        1,
+        7,
+        0,
+        0
+      ],
+      [
+        3,
+        0,
+        9,
+        85,
+        11,
+        1,
+        8,
+        2,
+        0
+      ],
+      [
+        2,
+        0,
+        1,
+        4,
+        43,
+        3,
+        6,
+        13,
+        2
+      ],
+      [
+        7,
+        0,
+        1,
+        3,
+        1,
+        57,
+        3,
+        3,
+        0
+      ],
+      [
+        1,
+        0,
+        8,
+        22,
+        11,
+        4,
+        87,
+        5,
+        0
+      ],
+      [
+        2,
+        1,
+        0,
+        1,
+        1,
+        4,
+        1,
+        37,
+        1
+      ],
+      [
+        0,
+        2,
+        0,
+        0,
+        1,
+        0,
+        0,
+        0,
+        62
+      ]
+    ],
+    "per_class": {
+      "Cardboard": {
+        "precision": 0.703704,
+        "recall": 0.550725,
+        "f1": 0.617886,
+        "support": 69
+      },
+      "Food Organics": {
+        "precision": 0.9,
+        "recall": 0.725806,
+        "f1": 0.803571,
+        "support": 62
+      },
+      "Glass": {
+        "precision": 0.710526,
+        "recall": 0.857143,
+        "f1": 0.776978,
+        "support": 63
+      },
+      "Metal": {
+        "precision": 0.691057,
+        "recall": 0.714286,
+        "f1": 0.702479,
+        "support": 119
+      },
+      "Miscellaneous Trash": {
+        "precision": 0.605634,
+        "recall": 0.581081,
+        "f1": 0.593103,
+        "support": 74
+      },
+      "Paper": {
+        "precision": 0.730769,
+        "recall": 0.76,
+        "f1": 0.745098,
+        "support": 75
+      },
+      "Plastic": {
+        "precision": 0.690476,
+        "recall": 0.630435,
+        "f1": 0.659091,
+        "support": 138
+      },
+      "Textile Trash": {
+        "precision": 0.552239,
+        "recall": 0.770833,
+        "f1": 0.643478,
+        "support": 48
+      },
+      "Vegetation": {
+        "precision": 0.911765,
+        "recall": 0.953846,
+        "f1": 0.932331,
+        "support": 65
+      }
+    }
+  },
+  "representative_samples": {
+    "correct_examples": [
+      {
+        "file": "Cardboard/Cardboard_456.jpg",
+        "true_label": "Cardboard",
+        "pred_label": "Cardboard",
+        "confidence": 1.0,
+        "correct": true
+      },
+      {
+        "file": "Vegetation/Vegetation_161.jpg",
+        "true_label": "Vegetation",
+        "pred_label": "Vegetation",
+        "confidence": 1.0,
+        "correct": true
+      },
+      {
+        "file": "Vegetation/Vegetation_18.jpg",
+        "true_label": "Vegetation",
+        "pred_label": "Vegetation",
+        "confidence": 1.0,
+        "correct": true
+      },
+      {
+        "file": "Food Organics/Food Organics_164.jpg",
+        "true_label": "Food Organics",
+        "pred_label": "Food Organics",
+        "confidence": 0.9999,
+        "correct": true
+      },
+      {
+        "file": "Glass/Glass_152.jpg",
+        "true_label": "Glass",
+        "pred_label": "Glass",
+        "confidence": 0.9999,
+        "correct": true
+      }
+    ],
+    "misclassified_examples": [
+      {
+        "file": "Plastic/Plastic_125.jpg",
+        "true_label": "Plastic",
+        "pred_label": "Glass",
+        "confidence": 0.9992,
+        "correct": false
+      },
+      {
+        "file": "Plastic/Plastic_103.jpg",
+        "true_label": "Plastic",
+        "pred_label": "Textile Trash",
+        "confidence": 0.9962,
+        "correct": false
+      },
+      {
+        "file": "Food Organics/Food Organics_132.jpg",
+        "true_label": "Food Organics",
+        "pred_label": "Plastic",
+        "confidence": 0.9944,
+        "correct": false
+      },
+      {
+        "file": "Miscellaneous Trash/Miscellaneous Trash_175.jpg",
+        "true_label": "Miscellaneous Trash",
+        "pred_label": "Textile Trash",
+        "confidence": 0.9944,
+        "correct": false
+      },
+      {
+        "file": "Paper/Paper_17.jpg",
+        "true_label": "Paper",
+        "pred_label": "Metal",
+        "confidence": 0.9938,
+        "correct": false
+      }
+    ]
+  },
+  "figures": {
+    "accuracy_f1_curves": "/kaggle/working/progress4_figures/p4_training_accuracy_f1_curves.png",
+    "loss_curves": "/kaggle/working/progress4_figures/p4_training_loss_curves.png",
+    "val_confusion_matrix": "/kaggle/working/progress4_figures/p4_val_confusion_matrix.png",
+    "val_per_class_metrics": "/kaggle/working/progress4_figures/p4_val_per_class_metrics.png"
+  }
+}

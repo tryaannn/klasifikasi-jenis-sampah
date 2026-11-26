@@ -1,0 +1,41 @@
+{
+  "spec": {
+    "exp_id": "exp04_mobilenet_tl",
+    "title": "EXP-04: MobileNetV3-Small Transfer Learning",
+    "model_name": "mobilenet_v3_small",
+    "optimizer_name": "AdamW",
+    "lr": 0.0001,
+    "weight_decay": 0.01,
+    "batch_size": 16,
+    "max_epochs": 30,
+    "augment": false,
+    "class_weighting": false,
+    "pretrained": true,
+    "freeze_backbone": true,
+    "dropout": 0.3
+  },
+  "environment": {
+    "device": "cuda",
+    "cuda_device_name": "Tesla T4",
+    "torch_version": "2.11.0+cu130",
+    "seed": 42
+  },
+  "model_stats": {
+    "total_parameters": 1527081,
+    "trainable_parameters": 600073
+  },
+  "dataset_counts": {
+    "train": 3327,
+    "validation": 713,
+    "test_used": false
+  },
+  "best_epoch": 30,
+  "best_val_loss": 1.054558,
+  "best_val_accuracy": 0.712482,
+  "best_val_macro_f1": 0.719335,
+  "best_val_macro_precision": 0.721797,
+  "best_val_macro_recall": 0.727128,
+  "epochs_ran": 30,
+  "total_training_seconds": 97.1,
+  "best_checkpoint": "/kaggle/working/progress4_results/exp04_mobilenet_tl/best_model.pt"
+}

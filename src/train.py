@@ -1,7 +1,8 @@
 """Controlled Progress 4 training runner for RealWaste CNN & MobileNetV3-Small.
 
-Runs EXP-01..EXP-04 on CPU or CUDA GPU, logs per-epoch metrics, saves best_model.pt
-by highest validation Macro F1, and never touches the held-out test set.
+Includes Phase 1 baseline matrix (EXP-01..EXP-04) and Phase 2 mitigation
+experiments (EXP-05..EXP-07) addressing overfitting and underfitting.
+Never touches the held-out test set.
 """
 from __future__ import annotations
 
@@ -44,6 +45,10 @@ class ExperimentSpec:
     pretrained: bool
     freeze_backbone: bool
     dropout: float = 0.3
+    unfreeze_last_n: int = 0
+    label_smoothing: float = 0.0
+    use_cosine_lr: bool = False
+    backbone_lr_mult: float = 0.3
 
 
 DEFAULT_CLASS_WEIGHTS_PATH = ROOT / "results/model_design/class_weights.json"
@@ -51,7 +56,7 @@ DEFAULT_OUTPUT_DIR = ROOT / "results/progress4"
 
 
 def build_experiment_specs(config: dict[str, Any] | None = None) -> dict[str, ExperimentSpec]:
-    """Construct controlled experiment matrix from configs/model_initial.yaml."""
+    """Construct controlled experiment matrix (initial + mitigation variants)."""
     cfg = config or load_config()
     cnn = cfg["models"]["cnn_baseline"]
     mob = cfg["models"]["mobilenet_v3_small"]
@@ -115,6 +120,61 @@ def build_experiment_specs(config: dict[str, Any] | None = None) -> dict[str, Ex
             class_weighting=False,
             pretrained=True,
             freeze_backbone=bool(mob["freeze_backbone"]),
+            dropout=0.2,
+        ),
+        # --- Phase 2: Mitigation Experiments ---
+        "exp05": ExperimentSpec(
+            exp_id="exp05_mobilenet_aug_reg",
+            title="EXP-05: MobileNetV3 + Aug + Regularisasi",
+            model_name="mobilenet_v3_small",
+            optimizer_name="AdamW",
+            lr=float(mob["learning_rate"]),
+            weight_decay=0.05,
+            batch_size=int(mob["batch_size"]),
+            max_epochs=30,
+            augment=True,
+            class_weighting=False,
+            pretrained=True,
+            freeze_backbone=True,
+            dropout=0.4,
+            unfreeze_last_n=0,
+            label_smoothing=0.05,
+            use_cosine_lr=True,
+        ),
+        "exp06": ExperimentSpec(
+            exp_id="exp06_mobilenet_finetune",
+            title="EXP-06: MobileNetV3 Fine-Tune + Aug + Weight",
+            model_name="mobilenet_v3_small",
+            optimizer_name="AdamW",
+            lr=float(mob["learning_rate"]),
+            weight_decay=0.05,
+            batch_size=int(mob["batch_size"]),
+            max_epochs=30,
+            augment=True,
+            class_weighting=True,
+            pretrained=True,
+            freeze_backbone=True,
+            dropout=0.4,
+            unfreeze_last_n=4,
+            label_smoothing=0.05,
+            use_cosine_lr=True,
+            backbone_lr_mult=0.3,
+        ),
+        "exp07": ExperimentSpec(
+            exp_id="exp07_cnn_mitigation",
+            title="EXP-07: CNN Baseline Extended + Scheduler",
+            model_name="cnn_baseline",
+            optimizer_name=cnn["optimizer"],
+            lr=0.0015,
+            weight_decay=0.0,
+            batch_size=int(cnn["batch_size"]),
+            max_epochs=60,
+            augment=True,
+            class_weighting=False,
+            pretrained=False,
+            freeze_backbone=False,
+            dropout=0.2,
+            use_cosine_lr=True,
         ),
     }
 
@@ -185,13 +245,38 @@ def instantiate_model(spec: ExperimentSpec, seed: int) -> nn.Module:
             torch.manual_seed(seed)
             return CNNBaseline(num_classes=NUM_CLASSES, dropout=spec.dropout)
     if spec.model_name == "mobilenet_v3_small":
-        return MobileNetV3Small(
+        model = MobileNetV3Small(
             num_classes=NUM_CLASSES,
             pretrained=spec.pretrained,
             freeze_backbone=spec.freeze_backbone,
             seed=seed,
         )
+        # Configure classifier dropout if adjusted for regularization
+        if hasattr(model.network.classifier[2], "p"):
+            model.network.classifier[2].p = float(spec.dropout)
+        if spec.unfreeze_last_n > 0:
+            model.set_trainable_feature_blocks(spec.unfreeze_last_n)
+        return model
     raise ValueError(f"Unsupported model_name: {spec.model_name}")
+
+
+def _build_optimizer(model: nn.Module, spec: ExperimentSpec) -> torch.optim.Optimizer:
+    opt_cls = getattr(torch.optim, spec.optimizer_name)
+    if spec.model_name == "mobilenet_v3_small" and spec.unfreeze_last_n > 0:
+        assert isinstance(model, MobileNetV3Small)
+        feat_params = [p for p in model.network.features.parameters() if p.requires_grad]
+        cls_params = [p for p in model.network.classifier.parameters() if p.requires_grad]
+        param_groups = [
+            {"params": feat_params, "lr": spec.lr * spec.backbone_lr_mult},
+            {"params": cls_params, "lr": spec.lr},
+        ]
+        return opt_cls(param_groups, weight_decay=spec.weight_decay)
+
+    return opt_cls(
+        (p for p in model.parameters() if p.requires_grad),
+        lr=spec.lr,
+        weight_decay=spec.weight_decay,
+    )
 
 
 def run_experiment(
@@ -258,12 +343,16 @@ def run_experiment(
     class_weight_tensor = (
         load_train_class_weights(weights_path).to(device) if spec.class_weighting else None
     )
-    criterion = nn.CrossEntropyLoss(weight=class_weight_tensor)
-    opt_cls = getattr(torch.optim, spec.optimizer_name)
-    optimizer = opt_cls(
-        (p for p in model.parameters() if p.requires_grad),
-        lr=spec.lr,
-        weight_decay=spec.weight_decay,
+    criterion = nn.CrossEntropyLoss(
+        weight=class_weight_tensor, label_smoothing=float(spec.label_smoothing)
+    )
+    optimizer = _build_optimizer(model, spec)
+    scheduler = (
+        torch.optim.lr_scheduler.CosineAnnealingLR(
+            optimizer, T_max=max(1, spec.max_epochs), eta_min=1e-6
+        )
+        if spec.use_cosine_lr
+        else None
     )
 
     exp_dir = Path(output_dir) / spec.exp_id
@@ -275,12 +364,16 @@ def run_experiment(
     best_val_loss = float("inf")
     best_epoch = 0
     best_metrics: dict[str, Any] = {}
+    best_train_acc = 0.0
+    best_train_loss = 0.0
     epochs_without_improve = 0
     start_total = time.perf_counter()
 
     print(f"\n=== Starting {spec.title} ({spec.exp_id}) on {device} ===")
-    print(f"Params: total={total_params:,}, trainable={trainable_params:,} | "
-          f"train={len(train_ds)}, val={len(val_ds)}")
+    print(
+        f"Params: total={total_params:,}, trainable={trainable_params:,} | "
+        f"train={len(train_ds)}, val={len(val_ds)} | unfreeze_last_n={spec.unfreeze_last_n}"
+    )
 
     for epoch in range(1, spec.max_epochs + 1):
         t0 = time.perf_counter()
@@ -303,6 +396,9 @@ def run_experiment(
             preds = logits.argmax(dim=1)
             train_correct += int((preds == labels).sum().item())
             train_total += bs
+
+        if scheduler is not None:
+            scheduler.step()
 
         train_loss = train_loss_sum / max(1, train_total)
         train_acc = train_correct / max(1, train_total)
@@ -353,6 +449,8 @@ def run_experiment(
             best_val_loss = val_loss
             best_epoch = epoch
             best_metrics = val_metrics
+            best_train_acc = train_acc
+            best_train_loss = train_loss
             epochs_without_improve = 0
             torch.save(
                 {
@@ -360,6 +458,7 @@ def run_experiment(
                     "title": spec.title,
                     "model_name": spec.model_name,
                     "dropout": spec.dropout,
+                    "unfreeze_last_n": spec.unfreeze_last_n,
                     "epoch": epoch,
                     "val_macro_f1": best_f1,
                     "val_accuracy": val_metrics["accuracy"],
@@ -384,7 +483,6 @@ def run_experiment(
 
     total_seconds = time.perf_counter() - start_total
 
-    # Save history CSV & JSON
     csv_path = exp_dir / "history.csv"
     with csv_path.open("w", newline="", encoding="utf-8") as f:
         writer = csv.DictWriter(f, fieldnames=list(history[0].keys()))
@@ -406,17 +504,58 @@ def run_experiment(
         },
         "dataset_counts": {"train": len(train_ds), "validation": len(val_ds), "test_used": False},
         "best_epoch": best_epoch,
+        "best_train_loss": round(best_train_loss, 6),
+        "best_train_accuracy": round(best_train_acc, 6),
         "best_val_loss": round(best_val_loss, 6),
         "best_val_accuracy": best_metrics.get("accuracy", 0.0),
         "best_val_macro_f1": best_f1,
         "best_val_macro_precision": best_metrics.get("macro_precision", 0.0),
         "best_val_macro_recall": best_metrics.get("macro_recall", 0.0),
+        "train_val_acc_gap": round(best_train_acc - best_metrics.get("accuracy", 0.0), 6),
         "epochs_ran": len(history),
         "total_training_seconds": round(total_seconds, 2),
         "best_checkpoint": str(best_ckpt_path),
     }
     (exp_dir / "summary.json").write_text(json.dumps(summary, indent=2), encoding="utf-8")
     return summary
+
+
+def write_comparison_table(output_dir: Path) -> list[dict[str, Any]]:
+    """Aggregate all completed exp* summaries under output_dir into comparison JSON/CSV."""
+    exp_dirs = sorted(p for p in output_dir.iterdir() if p.is_dir() and (p / "summary.json").is_file())
+    comparison: list[dict[str, Any]] = []
+    for ed in exp_dirs:
+        s = json.loads((ed / "summary.json").read_text(encoding="utf-8"))
+        hist = json.loads((ed / "history.json").read_text(encoding="utf-8"))
+        best_row = next(r for r in hist if r["epoch"] == s["best_epoch"])
+        tr_acc = float(s.get("best_train_accuracy", best_row["train_accuracy"]))
+        va_acc = float(s["best_val_accuracy"])
+        comparison.append({
+            "exp_id": s["spec"]["exp_id"],
+            "title": s["spec"]["title"],
+            "model_name": s["spec"]["model_name"],
+            "augment": s["spec"]["augment"],
+            "class_weighting": s["spec"]["class_weighting"],
+            "unfreeze_last_n": s["spec"].get("unfreeze_last_n", 0),
+            "best_epoch": s["best_epoch"],
+            "epochs_ran": s["epochs_ran"],
+            "best_train_accuracy": round(tr_acc, 6),
+            "best_val_loss": s["best_val_loss"],
+            "best_val_accuracy": va_acc,
+            "train_val_acc_gap": round(tr_acc - va_acc, 6),
+            "best_val_macro_f1": s["best_val_macro_f1"],
+            "total_training_seconds": s["total_training_seconds"],
+        })
+
+    if comparison:
+        (output_dir / "experiment_comparison.json").write_text(
+            json.dumps(comparison, indent=2), encoding="utf-8"
+        )
+        with (output_dir / "experiment_comparison.csv").open("w", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=list(comparison[0].keys()))
+            writer.writeheader()
+            writer.writerows(comparison)
+    return comparison
 
 
 def run_all_experiments(
@@ -433,7 +572,12 @@ def run_all_experiments(
     seed: int = 42,
 ) -> list[dict[str, Any]]:
     specs_map = build_experiment_specs()
-    selected = list(specs_map.keys()) if exp_keys == ["all"] else exp_keys
+    if exp_keys == ["all"]:
+        selected = list(specs_map.keys())
+    elif exp_keys == ["mitigation"]:
+        selected = ["exp05", "exp06", "exp07"]
+    else:
+        selected = exp_keys
 
     preloaded_cache = None
     if cache_path is not None:
@@ -469,37 +613,18 @@ def run_all_experiments(
         summaries.append(summary)
 
     output_dir.mkdir(parents=True, exist_ok=True)
-    comparison = [
-        {
-            "exp_id": s["spec"]["exp_id"],
-            "title": s["spec"]["title"],
-            "model_name": s["spec"]["model_name"],
-            "augment": s["spec"]["augment"],
-            "class_weighting": s["spec"]["class_weighting"],
-            "best_epoch": s["best_epoch"],
-            "epochs_ran": s["epochs_ran"],
-            "best_val_loss": s["best_val_loss"],
-            "best_val_accuracy": s["best_val_accuracy"],
-            "best_val_macro_f1": s["best_val_macro_f1"],
-            "total_training_seconds": s["total_training_seconds"],
-        }
-        for s in summaries
-    ]
-    (output_dir / "experiment_comparison.json").write_text(
-        json.dumps(comparison, indent=2), encoding="utf-8"
-    )
-    with (output_dir / "experiment_comparison.csv").open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=list(comparison[0].keys()))
-        writer.writeheader()
-        writer.writerows(comparison)
-
+    write_comparison_table(output_dir)
     return summaries
 
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--experiments", nargs="+", default=["all"],
-                        help="Experiment keys: exp01 exp02 exp03 exp04 or all")
+    parser.add_argument(
+        "--experiments",
+        nargs="+",
+        default=["all"],
+        help="Experiment keys: exp01..exp07, all, or mitigation",
+    )
     parser.add_argument("--data-dir", type=Path, default=None)
     parser.add_argument("--split-path", type=Path, default=DEFAULT_SPLIT_PATH)
     parser.add_argument("--cache-path", type=Path, default=ROOT / "tmp/realwaste_128_uint8.npz")
@@ -507,8 +632,11 @@ def main() -> None:
     parser.add_argument("--output-dir", type=Path, default=DEFAULT_OUTPUT_DIR)
     parser.add_argument("--epochs", type=int, default=None)
     parser.add_argument("--patience", type=int, default=8)
-    parser.add_argument("--no-pretrained", action="store_true",
-                        help="Disable ImageNet download (for offline synthetic smoke tests)")
+    parser.add_argument(
+        "--no-pretrained",
+        action="store_true",
+        help="Disable ImageNet download (for offline synthetic smoke tests)",
+    )
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args()
 

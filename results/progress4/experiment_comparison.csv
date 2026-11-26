@@ -1,0 +1,5 @@
+exp_id,title,model_name,augment,class_weighting,best_epoch,epochs_ran,best_val_loss,best_val_accuracy,best_val_macro_f1,total_training_seconds
+exp01_cnn_control,EXP-01: CNN Baseline Kontrol,cnn_baseline,False,False,30,30,1.41307,0.493689,0.489959,111.35
+exp02_cnn_aug,EXP-02: CNN Baseline + Augmentasi,cnn_baseline,True,False,29,30,1.604104,0.42777,0.409552,229.2
+exp03_cnn_weighted,EXP-03: CNN Baseline + Class Weighting,cnn_baseline,False,True,19,27,1.446555,0.485273,0.485503,94.81
+exp04_mobilenet_tl,EXP-04: MobileNetV3-Small Transfer Learning,mobilenet_v3_small,False,False,30,30,1.054558,0.712482,0.719335,97.1

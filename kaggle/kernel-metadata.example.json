@@ -1,0 +1,17 @@
+{
+  "id": "YOUR_KAGGLE_USERNAME/realwaste-progress4-training",
+  "title": "realwaste-progress4-training",
+  "code_file": "kaggle_runner_p4.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": "true",
+  "enable_gpu": "true",
+  "enable_tpu": "false",
+  "enable_internet": "true",
+  "dataset_sources": [
+    "joebeachcapital/realwaste"
+  ],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

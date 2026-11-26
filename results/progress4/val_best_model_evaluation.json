@@ -251,6 +251,7 @@
     "accuracy_f1_curves": "/kaggle/working/progress4_figures/p4_training_accuracy_f1_curves.png",
     "loss_curves": "/kaggle/working/progress4_figures/p4_training_loss_curves.png",
     "val_confusion_matrix": "/kaggle/working/progress4_figures/p4_val_confusion_matrix.png",
-    "val_per_class_metrics": "/kaggle/working/progress4_figures/p4_val_per_class_metrics.png"
+    "val_per_class_metrics": "/kaggle/working/progress4_figures/p4_val_per_class_metrics.png",
+    "train_val_gap_comparison": "/kaggle/working/progress4_figures/p4_train_val_gap_comparison.png"
   }
 }

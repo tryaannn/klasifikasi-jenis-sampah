@@ -1,4 +1,4 @@
-"""Offline synthetic smoke tests for Progress 4 dataset, training, and validation evaluation."""
+"""Offline synthetic smoke tests for Progress 4 dataset, 2-stage training, and validation evaluation."""
 from __future__ import annotations
 
 import json
@@ -54,7 +54,7 @@ def test_anti_leakage_guards_and_cache(tmp_path: Path) -> None:
     resolved = resolve_realwaste_root(raw_dir)
     assert resolved.name == "RealWaste"
 
-    cache_path = build_uint8_cache(raw_dir, tmp_path / "cache.npz", split_path)
+    cache_path = build_uint8_cache(raw_dir, tmp_path / "cache224.npz", split_path, image_size=(224, 224))
     assert cache_path.is_file()
 
     # Test split MUST be blocked by default during Progress 4
@@ -64,48 +64,63 @@ def test_anti_leakage_guards_and_cache(tmp_path: Path) -> None:
     # Augmentation MUST be blocked on validation split
     with pytest.raises(ValueError):
         RealWasteDataset(
-            "validation", "cnn_baseline", augment=True, split_path=split_path, cache_path=cache_path
+            "validation", "mobilenet_v3_small", augment=True, image_size=(224, 224),
+            split_path=split_path, cache_path=cache_path
         )
 
 
-def test_end_to_end_progress4_smoke(tmp_path: Path) -> None:
+def test_end_to_end_ablation_224_and_2stage_smoke(tmp_path: Path) -> None:
     raw_dir, split_path, weights_path = _create_synthetic_realwaste(tmp_path, per_class=5)
-    cache_path = tmp_path / "realwaste_128_uint8.npz"
+    cache_path = tmp_path / "realwaste_224_uint8.npz"
     out_dir = tmp_path / "results_p4"
     fig_dir = tmp_path / "figures_p4"
 
     summaries = run_all_experiments(
-        ["all"],
+        ["ablation224"],
         data_dir=raw_dir,
         split_path=split_path,
         cache_path=cache_path,
         weights_path=weights_path,
         output_dir=out_dir,
-        epochs_override=2,
+        figures_dir=fig_dir,
+        epochs_override=3,
+        stage1_override=1,
         pretrained_override=False,
         patience=5,
         seed=42,
     )
 
-    assert len(summaries) == 7
+    assert len(summaries) == 4
     assert all(not s["dataset_counts"]["test_used"] for s in summaries)
+    assert all(s["spec"]["image_size"] == 224 for s in summaries)
+    assert (fig_dir / "p4_sanity_train_val_batch.png").is_file()
     assert (out_dir / "experiment_comparison.json").is_file()
     assert (out_dir / "experiment_comparison.csv").is_file()
+
+    # Verify 2-stage experiments saved Stage 1 checkpoint and transitioned to Stage 2
     for s in summaries:
         exp_dir = out_dir / s["spec"]["exp_id"]
         assert (exp_dir / "best_model.pt").is_file()
         assert (exp_dir / "history.csv").is_file()
         assert (exp_dir / "summary.json").is_file()
+        if s["spec"]["stage1_epochs"] > 0:
+            assert (exp_dir / "stage1_best.pt").is_file()
+            hist = json.loads((exp_dir / "history.json").read_text(encoding="utf-8"))
+            assert [h["stage"] for h in hist] == [1, 2, 2]
 
     report = evaluate_validation(
         results_dir=out_dir,
         figures_dir=fig_dir,
+        data_dir=raw_dir,
         split_path=split_path,
         cache_path=cache_path,
     )
     assert report["evaluation_split"] == "validation_only"
     assert report["test_set_untouched"] is True
-    assert report["validation_count"] == 9  # 1 validation sample per class
+    assert report["validation_count"] == 9
+    assert len(report["error_analysis"]["weakest_3_classes"]) == 3
+    assert "ece_10_bins" in report["calibration"]
+    assert "git_commit" in report["reproducibility"]
     for fig_path in report["figures"].values():
         assert Path(fig_path).is_file()
     assert (out_dir / "val_best_model_evaluation.json").is_file()

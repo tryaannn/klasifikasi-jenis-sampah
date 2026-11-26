@@ -1,13 +1,13 @@
 """Standardized preprocessing and augmentation pipelines for RealWaste models.
 
 Enforces architecture-specific normalization policies:
-- CNN Baseline: Bilinear resize to 128x128, scaling pixels to [0, 1].
-- MobileNetV3-Small: Bilinear resize to 128x128, scaling to [0, 1] followed by ImageNet mean and std.
+- CNN Baseline: Bilinear resize to target size, scaling pixels to [0, 1].
+- MobileNetV3-Small: Bilinear resize to target size, scaling to [0, 1] followed by ImageNet mean and std.
 
-Controlled augmentation variants for training:
+Controlled augmentation variants for training ONLY:
+- RandomResizedCrop with valid scale=(0.75, 1.0), ratio=(0.9, 1.1)
 - Random horizontal flip (p=0.5)
 - Random rotation (+/- 15 degrees)
-- Random zoom/scale (0.9 to 1.1)
 - Color jitter (brightness +/- 0.1, contrast +/- 0.1)
 """
 from __future__ import annotations
@@ -45,7 +45,7 @@ def get_transforms(
     # Augmentation applied ONLY on training split when augment=True
     if split == "train" and augment:
         t_list.extend([
-            transforms.RandomResizedCrop(image_size, scale=(0.9, 1.1), ratio=(0.95, 1.05), antialias=True),
+            transforms.RandomResizedCrop(image_size, scale=(0.75, 1.0), ratio=(0.9, 1.1), antialias=True),
             transforms.RandomHorizontalFlip(p=0.5),
             transforms.RandomRotation(degrees=15),
             transforms.ColorJitter(brightness=0.1, contrast=0.1),
@@ -53,7 +53,7 @@ def get_transforms(
     else:
         t_list.append(transforms.Resize(image_size, antialias=True))
 
-    # Convert PIL Image or NumPy array to FloatTensor in [0, 1]
+    # Convert PIL Image or NumPy array to FloatTensor in [0, 1] with RGB channel order
     t_list.append(transforms.ToTensor())
 
     # Architecture-specific normalization
@@ -67,20 +67,28 @@ def get_transforms(
     return transforms.Compose(t_list)
 
 
+def unnormalize_for_display(tensor: torch.Tensor, model_name: str) -> np.ndarray:
+    """Convert CHW normalized tensor back to HWC float32 [0, 1] RGB for visual inspection."""
+    img = tensor.detach().cpu().clone()
+    if model_name.lower() in ("mobilenet_v3_small", "mobilenetv3small"):
+        mean = torch.tensor(IMAGENET_MEAN, dtype=img.dtype).view(3, 1, 1)
+        std = torch.tensor(IMAGENET_STD, dtype=img.dtype).view(3, 1, 1)
+        img = img * std + mean
+    img = img.clamp(0.0, 1.0).permute(1, 2, 0).numpy()
+    return img
+
+
 def generate_synthetic_augmentation_preview(
     output_path: Path = ROOT / "figures/data_augmentation_preview.png",
     seed: int = 42,
 ) -> Path:
     """Generate visual demonstration of the controlled augmentation policy on a geometric pattern."""
     np.random.seed(seed)
-    # Create a synthetic 128x128 test patch simulating waste texture & edge
     h, w = 128, 128
     grid = np.zeros((h, w, 3), dtype=np.uint8)
-    grid[:, :] = [210, 215, 220]  # background
-    # Add colored geometric shapes representing waste item
-    grid[30:98, 30:98] = [60, 130, 210]  # blue plastic-like object
-    grid[45:83, 45:83] = [230, 175, 40]   # inner cardboard-like label
-    # Add a thin diagonal wire simulating metal
+    grid[:, :] = [210, 215, 220]
+    grid[30:98, 30:98] = [60, 130, 210]
+    grid[45:83, 45:83] = [230, 175, 40]
     for i in range(20, 108):
         grid[i, i] = [40, 40, 40]
         grid[i, min(127, i + 1)] = [180, 180, 180]
@@ -88,7 +96,7 @@ def generate_synthetic_augmentation_preview(
     pil_img = Image.fromarray(grid)
 
     aug_pipeline = transforms.Compose([
-        transforms.RandomResizedCrop((h, w), scale=(0.9, 1.1), ratio=(0.95, 1.05), antialias=True),
+        transforms.RandomResizedCrop((h, w), scale=(0.75, 1.0), ratio=(0.9, 1.1), antialias=True),
         transforms.RandomHorizontalFlip(p=0.5),
         transforms.RandomRotation(degrees=15),
         transforms.ColorJitter(brightness=0.1, contrast=0.1),

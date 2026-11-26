@@ -1,8 +1,4 @@
-"""Dataset loading and uint8 caching utilities for RealWaste (anti-leakage enforced).
-
-Reads the canonical group-aware split from results/data_split_indices.json and
-prevents accidental access to the held-out test set during Progress 4 training.
-"""
+"""Dataset loading, uint8 caching (128x128 / 224x224), and batch sanity verification."""
 from __future__ import annotations
 
 import argparse
@@ -10,13 +6,16 @@ import json
 from pathlib import Path
 from typing import Any
 
+import matplotlib
+matplotlib.use("Agg")
+import matplotlib.pyplot as plt
 import numpy as np
 from PIL import Image
 import torch
 from torch.utils.data import Dataset
 
 from .models.config import CLASS_NAMES, CLASS_TO_IDX, INPUT_SIZE, ROOT
-from .transforms import get_transforms
+from .transforms import get_transforms, unnormalize_for_display
 
 DEFAULT_SPLIT_PATH = ROOT / "results/data_split_indices.json"
 
@@ -41,7 +40,6 @@ def resolve_realwaste_root(data_dir: str | Path) -> Path:
     if required.issubset({p.name for p in base.iterdir() if p.is_dir()}):
         return base
 
-    # Search nested directories (common on Kaggle / unzipped archives)
     for candidate in sorted(base.rglob("*")):
         if candidate.is_dir():
             subdirs = {p.name for p in candidate.iterdir() if p.is_dir()}
@@ -88,7 +86,6 @@ def build_uint8_cache(
     all_files: list[str] = []
     for key in ("train", "validation", "test"):
         all_files.extend(split_data.get(key, []))
-    # Preserve order while deduplicating
     unique_files = list(dict.fromkeys(f.replace("\\", "/") for f in all_files))
 
     h, w = image_size
@@ -120,7 +117,12 @@ def load_uint8_cache(cache_path: str | Path) -> dict[str, Any]:
         files = [str(f) for f in archive["files"]]
         labels = archive["labels"]
     file_to_idx = {f: i for i, f in enumerate(files)}
-    return {"images": images, "file_to_idx": file_to_idx, "labels": labels}
+    return {
+        "images": images,
+        "file_to_idx": file_to_idx,
+        "labels": labels,
+        "image_size": tuple(int(x) for x in images.shape[1:3]),
+    }
 
 
 class RealWasteDataset(Dataset):
@@ -132,6 +134,7 @@ class RealWasteDataset(Dataset):
         model_name: str,
         *,
         augment: bool = False,
+        image_size: tuple[int, int] = INPUT_SIZE,
         data_dir: str | Path | None = None,
         split_path: str | Path = DEFAULT_SPLIT_PATH,
         cache_path: str | Path | None = None,
@@ -144,20 +147,27 @@ class RealWasteDataset(Dataset):
         self.records = load_split_records(self.split, split_path, allow_test=allow_test)
         self.model_name = model_name
         self.augment = augment
+        self.image_size = tuple(image_size)
         self.transform = get_transforms(
             model_name=model_name,
             split="train" if self.split == "train" else "val",
             augment=augment,
+            image_size=self.image_size,
         )
 
         self.cache = preloaded_cache
         if self.cache is None and cache_path is not None and Path(cache_path).is_file():
             self.cache = load_uint8_cache(cache_path)
 
+        # Only use preloaded/loaded cache if its spatial resolution >= requested image_size (or matches)
+        if self.cache is not None and self.cache.get("image_size") != self.image_size:
+            if data_dir is not None:
+                self.cache = None  # fall back to raw data_dir if cache resolution mismatches
+
         self.rw_root: Path | None = None
         if self.cache is None:
             if data_dir is None:
-                raise ValueError("Either data_dir or a valid cache_path/preloaded_cache must be provided.")
+                raise ValueError("Either data_dir or a resolution-matched cache must be provided.")
             self.rw_root = resolve_realwaste_root(data_dir)
 
     def __len__(self) -> int:
@@ -176,16 +186,70 @@ class RealWasteDataset(Dataset):
         return tensor, label
 
 
+def save_sanity_batch_grid(
+    train_ds: RealWasteDataset,
+    val_ds: RealWasteDataset,
+    output_path: str | Path,
+    *,
+    n_samples: int = 6,
+    seed: int = 42,
+) -> Path:
+    """Save a visual grid of preprocessed Train (augmented) vs Validation (clean) samples."""
+    rng = np.random.default_rng(seed)
+    tr_indices = rng.choice(len(train_ds), size=min(n_samples, len(train_ds)), replace=False)
+    va_indices = rng.choice(len(val_ds), size=min(n_samples, len(val_ds)), replace=False)
+
+    cols = max(len(tr_indices), len(va_indices))
+    fig, axes = plt.subplots(2, cols, figsize=(2.4 * cols, 5.2), dpi=200)
+    if cols == 1:
+        axes = np.expand_dims(axes, axis=1)
+
+    torch.manual_seed(seed)
+    for c, idx in enumerate(tr_indices):
+        tensor, label = train_ds[int(idx)]
+        img = unnormalize_for_display(tensor, train_ds.model_name)
+        axes[0, c].imshow(img)
+        axes[0, c].set_title(f"Train (Aug)\n{CLASS_NAMES[label]}", fontsize=8.5, fontweight="bold")
+        axes[0, c].axis("off")
+
+    for c, idx in enumerate(va_indices):
+        tensor, label = val_ds[int(idx)]
+        img = unnormalize_for_display(tensor, val_ds.model_name)
+        axes[1, c].imshow(img)
+        axes[1, c].set_title(f"Val (Clean)\n{CLASS_NAMES[label]}", fontsize=8.5)
+        axes[1, c].axis("off")
+
+    sz = train_ds.image_size
+    plt.suptitle(
+        f"Sanity Check Preprocessing ({sz[0]}x{sz[1]} RGB, Unnormalized Display) — Train vs Validation",
+        fontweight="bold",
+        fontsize=11,
+        y=1.01,
+    )
+    plt.tight_layout()
+    out = Path(output_path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    plt.savefig(out, bbox_inches="tight")
+    plt.close()
+    return out
+
+
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Build 128x128 uint8 image cache for RealWaste.")
+    parser = argparse.ArgumentParser(description="Build uint8 image cache for RealWaste.")
     parser.add_argument("--data-dir", type=Path, default=ROOT / "data")
     parser.add_argument("--split-path", type=Path, default=DEFAULT_SPLIT_PATH)
-    parser.add_argument("--cache-out", type=Path, default=ROOT / "tmp/realwaste_128_uint8.npz")
+    parser.add_argument("--image-size", type=int, default=224)
+    parser.add_argument("--cache-out", type=Path, default=ROOT / "tmp/realwaste_224_uint8.npz")
     args = parser.parse_args()
 
-    out = build_uint8_cache(args.data_dir, args.cache_out, args.split_path)
+    out = build_uint8_cache(
+        args.data_dir,
+        args.cache_out,
+        args.split_path,
+        image_size=(args.image_size, args.image_size),
+    )
     size_mb = out.stat().st_size / (1024 * 1024)
-    print(f"Built uint8 cache at {out} ({size_mb:.2f} MB)")
+    print(f"Built {args.image_size}x{args.image_size} uint8 cache at {out} ({size_mb:.2f} MB)")
 
 
 if __name__ == "__main__":

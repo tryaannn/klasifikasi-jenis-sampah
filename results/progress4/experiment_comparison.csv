@@ -1,5 +1,8 @@
-exp_id,title,model_name,augment,class_weighting,best_epoch,epochs_ran,best_val_loss,best_val_accuracy,best_val_macro_f1,total_training_seconds
-exp01_cnn_control,EXP-01: CNN Baseline Kontrol,cnn_baseline,False,False,30,30,1.41307,0.493689,0.489959,111.35
-exp02_cnn_aug,EXP-02: CNN Baseline + Augmentasi,cnn_baseline,True,False,29,30,1.604104,0.42777,0.409552,229.2
-exp03_cnn_weighted,EXP-03: CNN Baseline + Class Weighting,cnn_baseline,False,True,19,27,1.446555,0.485273,0.485503,94.81
-exp04_mobilenet_tl,EXP-04: MobileNetV3-Small Transfer Learning,mobilenet_v3_small,False,False,30,30,1.054558,0.712482,0.719335,97.1
+exp_id,title,model_name,augment,class_weighting,unfreeze_last_n,best_epoch,epochs_ran,best_train_accuracy,best_val_loss,best_val_accuracy,train_val_acc_gap,best_val_macro_f1,total_training_seconds
+exp01_cnn_control,EXP-01: CNN Baseline Kontrol,cnn_baseline,False,False,0,30,30,0.56838,1.41307,0.493689,0.074691,0.489959,111.35
+exp02_cnn_aug,EXP-02: CNN Baseline + Augmentasi,cnn_baseline,True,False,0,29,30,0.528404,1.604104,0.42777,0.100634,0.409552,229.2
+exp03_cnn_weighted,EXP-03: CNN Baseline + Class Weighting,cnn_baseline,False,True,0,19,27,0.525699,1.446555,0.485273,0.040426,0.485503,94.81
+exp04_mobilenet_tl,EXP-04: MobileNetV3-Small Transfer Learning,mobilenet_v3_small,False,False,0,30,30,0.98407,1.054558,0.712482,0.271588,0.719335,97.1
+exp05_mobilenet_aug_reg,EXP-05: MobileNetV3 + Aug + Regularisasi,mobilenet_v3_small,True,False,0,27,30,0.840096,1.10032,0.698457,0.141639,0.708171,224.9
+exp06_mobilenet_finetune,EXP-06: MobileNetV3 Fine-Tune + Aug + Weight,mobilenet_v3_small,True,True,4,27,30,0.85813,1.098269,0.692847,0.165283,0.698044,260.17
+exp07_cnn_mitigation,EXP-07: CNN Baseline Extended + Scheduler,cnn_baseline,True,False,0,24,34,0.530207,1.483047,0.481066,0.049141,0.460808,256.04

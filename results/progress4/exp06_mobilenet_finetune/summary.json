@@ -1,0 +1,48 @@
+{
+  "spec": {
+    "exp_id": "exp06_mobilenet_finetune",
+    "title": "EXP-06: MobileNetV3 Fine-Tune + Aug + Weight",
+    "model_name": "mobilenet_v3_small",
+    "optimizer_name": "AdamW",
+    "lr": 0.0001,
+    "weight_decay": 0.05,
+    "batch_size": 16,
+    "max_epochs": 30,
+    "augment": true,
+    "class_weighting": true,
+    "pretrained": true,
+    "freeze_backbone": true,
+    "dropout": 0.4,
+    "unfreeze_last_n": 4,
+    "label_smoothing": 0.05,
+    "use_cosine_lr": true,
+    "backbone_lr_mult": 0.3
+  },
+  "environment": {
+    "device": "cuda",
+    "cuda_device_name": "Tesla T4",
+    "torch_version": "2.11.0+cu130",
+    "seed": 42
+  },
+  "model_stats": {
+    "total_parameters": 1527081,
+    "trainable_parameters": 1336561
+  },
+  "dataset_counts": {
+    "train": 3327,
+    "validation": 713,
+    "test_used": false
+  },
+  "best_epoch": 27,
+  "best_train_loss": 0.660187,
+  "best_train_accuracy": 0.85813,
+  "best_val_loss": 1.098269,
+  "best_val_accuracy": 0.692847,
+  "best_val_macro_f1": 0.698044,
+  "best_val_macro_precision": 0.693741,
+  "best_val_macro_recall": 0.716462,
+  "train_val_acc_gap": 0.165283,
+  "epochs_ran": 30,
+  "total_training_seconds": 260.17,
+  "best_checkpoint": "/kaggle/working/progress4_results/exp06_mobilenet_finetune/best_model.pt"
+}

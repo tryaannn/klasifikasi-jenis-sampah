@@ -1,0 +1,48 @@
+{
+  "spec": {
+    "exp_id": "exp07_cnn_mitigation",
+    "title": "EXP-07: CNN Baseline Extended + Scheduler",
+    "model_name": "cnn_baseline",
+    "optimizer_name": "Adam",
+    "lr": 0.0015,
+    "weight_decay": 0.0,
+    "batch_size": 32,
+    "max_epochs": 60,
+    "augment": true,
+    "class_weighting": false,
+    "pretrained": false,
+    "freeze_backbone": false,
+    "dropout": 0.2,
+    "unfreeze_last_n": 0,
+    "label_smoothing": 0.0,
+    "use_cosine_lr": true,
+    "backbone_lr_mult": 0.3
+  },
+  "environment": {
+    "device": "cuda",
+    "cuda_device_name": "Tesla T4",
+    "torch_version": "2.11.0+cu130",
+    "seed": 42
+  },
+  "model_stats": {
+    "total_parameters": 102089,
+    "trainable_parameters": 102089
+  },
+  "dataset_counts": {
+    "train": 3327,
+    "validation": 713,
+    "test_used": false
+  },
+  "best_epoch": 24,
+  "best_train_loss": 1.309013,
+  "best_train_accuracy": 0.530207,
+  "best_val_loss": 1.483047,
+  "best_val_accuracy": 0.481066,
+  "best_val_macro_f1": 0.460808,
+  "best_val_macro_precision": 0.491548,
+  "best_val_macro_recall": 0.473349,
+  "train_val_acc_gap": 0.049141,
+  "epochs_ran": 34,
+  "total_training_seconds": 256.04,
+  "best_checkpoint": "/kaggle/working/progress4_results/exp07_cnn_mitigation/best_model.pt"
+}

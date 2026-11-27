@@ -92,7 +92,7 @@ def format_table(
                 if ci == 0:
                     para.alignment = WD_ALIGN_PARAGRAPH.LEFT
                 for run in para.runs:
-                    run.bold = (ri == 0) or (ri in highlight_rows and ci == 0)
+                    run.bold = (ri == 0)
                     run.font.size = Pt(font_pt)
 
 
@@ -246,68 +246,66 @@ def _add_bab4_content(
     heading1("BAB IV — HASIL DAN PEMBAHASAN (PROGRES 4)")
 
     p(
-        f"Pertemuan 13–14 | Melaporkan realisasi pelatihan, studi ablasi terkontrol sebanyak 11 varian eksperimen "
-        f"(EXP-01 s.d. EXP-11) pada akselerator NVIDIA Tesla T4 Kaggle, audit forensik preprocessing dan kalibrasi, "
-        f"serta evaluasi awal khusus pada Validation Set (713 citra). Sesuai disiplin anti-kebocoran ilmiah, "
-        f"Test Set (712 citra) tetap terkunci (test_used={str(exp10_summary['dataset_counts']['test_used']).lower()}, "
-        f"test_set_untouched={str(val_eval['test_set_untouched']).lower()}) dan baru akan dievaluasi satu kali pada Progres 5.",
+        f"Pertemuan 13–14. Bab ini menyajikan implementasi pipeline pelatihan, hasil studi ablasi 11 eksperimen "
+        f"(EXP-01 hingga EXP-11) pada GPU NVIDIA Tesla T4 di Kaggle, pemeriksaan data dan kalibrasi probabilitas, "
+        f"serta evaluasi pada Validation Set (713 citra). Selama Progres 4, Test Set (712 citra) tetap dikunci "
+        f"(test_used bernilai false dan test_set_untouched bernilai true) dan baru akan digunakan pada evaluasi akhir di Progres 5.",
         italic=True,
         first_indent=False,
         muted=True,
     )
 
     # Subbab 4.1
-    heading2("4.1 Hasil Implementasi Model dan Integritas Pipeline")
+    heading2("4.1 Hasil Implementasi Model dan Kesiapan Pipeline")
     p(
-        "Seluruh rancangan arsitektur pada BAB III berhasil diimplementasikan dan dijalankan secara modular melalui "
-        "pipeline src/dataset.py, src/transforms.py, src/train.py, dan src/evaluate_val.py. Sebelum pelatihan GPU di "
-        "Kaggle dieksekusi (notebook kaggle/kaggle_runner_p4.ipynb), seluruh 14 skenario unit test dan smoke test "
-        "pada pytest dinyatakan lulus 100%, mencakup pengujian bentuk tensor, pembekuan lapisan BatchNorm pada blok frozen, "
-        "penolakan eksplisit apabila augmentasi diaktifkan pada split validation atau test, serta penolakan apabila resolusi cache "
-        "tidak sesuai dengan model."
+        "Rancangan arsitektur pada BAB III diimplementasikan secara modular pada berkas src/dataset.py, "
+        "src/transforms.py, src/train.py, dan src/evaluate_val.py, lalu dijalankan pada lingkungan Kaggle melalui "
+        "notebook kaggle/kaggle_runner_p4.ipynb. Sebelum pelatihan dimulai, seluruh 14 pengujian unit dan smoke test "
+        "pada pytest berjalan lancar (14 passed), meliputi pemeriksaan dimensi tensor keluaran, pembekuan statistik "
+        "BatchNorm pada lapisan fitur yang dibekukan, serta validasi bahwa augmentasi tidak pernah aktif pada data validasi maupun data uji."
     )
     p(
-        "Pada tahap audit Fase 1–2 ditemukan dua kendala teknis yang langsung diperbaiki sebelum studi ablasi Fase 3 "
-        "(EXP-08 s.d. EXP-11): pertama, resolusi 128×128 piksel menjadi bottleneck tekstur yang membatasi kapasitas pembedaan "
-        "material halus sehingga ditingkatkan ke 224×224 piksel (standar pralatih ImageNet-1K dengan cache disk uint8 683,06 MB); "
-        "kedua, komposisi augmentasi awal yang terlalu agresif disederhanakan menjadi RandomResizedCrop(224, scale=(0.75, 1.0), "
-        "ratio=(0.9, 1.1)), RandomHorizontalFlip(p=0.5), RandomRotation(±15°), dan ColorJitter ringan (0,15) khusus untuk Train Set."
+        "Pada percobaan awal beresolusi 128×128 piksel, performa model tertahan dan detail tekstur antarjenis material "
+        "tampak kurang terbedakan. Oleh karena itu, pada rangkaian eksperimen lanjutan (EXP-08 hingga EXP-11) resolusi "
+        "masukan ditingkatkan menjadi 224×224 piksel sesuai standar pra-latih ImageNet-1K dengan cache disk bertipe uint8 "
+        "berukuran 683,06 MB. Augmentasi pada data latih juga disederhanakan menjadi RandomResizedCrop(224) dengan skala "
+        "0,75 hingga 1,0, pembalikan horizontal acak (p=0,5), rotasi acak maksimal 15 derajat, dan ColorJitter ringan (0,15)."
     )
 
     add_table(
-        ["Komponen Verifikasi Sistem", "Bukti Implementasi Aktual (Artefak JSON & Log Kaggle)"],
+        ["Komponen Verifikasi Sistem", "Keterangan Implementasi Aktual"],
         [
-            ("Framework & Akselerator GPU", f"PyTorch {repro['torch_version']} pada {exp10_summary['environment']['cuda_device_name']} (Kaggle Notebook Version 3)"),
-            ("Reproducibility & Kode", f"Random seed = {repro['seed']}, commit Git = {repro['git_commit']} (branch test/majid), pytest = 14 passed (100%)"),
-            ("Partisi & Kunci Test Set", "Train = 3.327 citra | Validation = 713 citra | Test Set = 712 citra TERKUNCI (test_set_untouched=true)"),
-            ("Normalisasi & Channel Order", "RGB skala [0, 1]; MobileNetV3: mean [0.485, 0.456, 0.406], std [0.229, 0.224, 0.225]; CNN Baseline: [0, 1]"),
-            ("Model Terbaik Sementara (Opsi B)", f"EXP-10 (MobileNetV3-Small 224×224, 2-Stage Fine-Tuning): total {exp10_summary['model_stats']['total_parameters']:,} param, Stage 2 trainable {exp10_summary['model_stats']['trainable_parameters']:,} param"),
+            ("Framework dan Perangkat Keras", f"PyTorch {repro['torch_version']} pada GPU {exp10_summary['environment']['cuda_device_name']} (Kaggle Notebook Version 3)"),
+            ("Reproduksibilitas dan Pengujian", f"Seed acak = {repro['seed']}, commit Git = {repro['git_commit']} pada branch test/majid, pytest lulus 14 pengujian"),
+            ("Pembagian dan Penguncian Data", "Data latih 3.327 citra, validasi 713 citra, dan data uji 712 citra masih dikunci hingga Progres 5"),
+            ("Normalisasi dan Urutan Kanal", "Citra RGB skala [0, 1]; MobileNetV3 memakai mean [0.485, 0.456, 0.406] dan std [0.229, 0.224, 0.225]"),
+            ("Model Terpilih pada Progres 4", f"EXP-10 (MobileNetV3-Small 224×224, two-stage fine-tuning) dengan total {exp10_summary['model_stats']['total_parameters']:,} parameter dan {exp10_summary['model_stats']['trainable_parameters']:,} parameter dilatih pada tahap kedua"),
         ],
         [2.0, 4.2],
-        caption_text="Tabel 4.1 Ringkasan Verifikasi Lingkungan Eksekusi, Reproducibility, dan Integritas Data",
+        caption_text="Tabel 4.1 Ringkasan Lingkungan Eksekusi, Reproduksibilitas, dan Status Data",
     )
 
     figure(
         "p4_sanity_train_val_batch.png",
-        "Gambar 4.1 Sanity check visual batch preprocessing (224×224 RGB unnormalized display): augmentasi hanya aktif pada Train Set (atas), sedangkan Validation Set (bawah) bersih tanpa crop/rotasi.",
+        "Gambar 4.1 Contoh citra hasil prapemrosesan (224×224 piksel RGB): augmentasi hanya diterapkan pada baris data latih (atas), sedangkan baris data validasi (bawah) tetap utuh.",
         width_inch=6.0,
     )
 
     # Subbab 4.2
-    heading2("4.2 Hasil Pelatihan Model dan Studi Ablasi (EXP-01 s.d. EXP-11)")
+    heading2("4.2 Hasil Pelatihan Model dan Studi Ablasi (EXP-01 hingga EXP-11)")
     p(
-        "Pelatihan dilakukan secara bertahap melalui tiga fase terstruktur untuk mengisolasi pengaruh arsitektur, "
-        "regularisasi, resolusi spasial 224×224, dan strategi fine-tuning 2-tahap (2-Stage Fine-Tuning): "
-        "Fase 1 (EXP-01 s.d. EXP-04) mengevaluasi titik acuan 128×128; Fase 2 (EXP-05 s.d. EXP-07) menguji mitigasi "
-        "overfitting dan underfitting pada 128×128; serta Fase 3 (EXP-08 s.d. EXP-11) menjalankan ablasi resolusi 224×224 "
-        "dengan pemisahan tahap latih classification head (Stage 1: epoch 1–8, lr=1e-3, backbone frozen) lalu memuat "
-        "checkpoint terbaik Stage 1 sebelum membuka 4 blok konvolusi akhir (Stage 2: epoch 9–30, differential LR "
-        "backbone=5e-5, head=1,5e-4, warmup 2 epoch + CosineAnnealingLR, Early Stopping patience=7)."
+        "Pelatihan dijalankan dalam tiga kelompok eksperimen untuk melihat pengaruh arsitektur, regularisasi, "
+        "resolusi 224×224, serta strategi pelatihan dua tahap (two-stage fine-tuning). Kelompok pertama (EXP-01 hingga EXP-04) "
+        "mengukur baseline pada resolusi 128×128; kelompok kedua (EXP-05 hingga EXP-07) menguji mitigasi overfitting "
+        "dan underfitting pada 128×128; dan kelompok ketiga (EXP-08 hingga EXP-11) menguji masukan 224×224. Khusus pada "
+        "EXP-10 dan EXP-11, pelatihan dibagi menjadi tahap pertama untuk melatih head klasifikasi selama 8 epoch (lr=1e-3, "
+        "backbone dibekukan), lalu bobot terbaik tahap pertama dimuat kembali sebelum membuka empat blok konvolusi akhir "
+        "pada tahap kedua (epoch 9 hingga 30, learning rate backbone 5e-5 dan head 1,5e-4, warmup 2 epoch, penjadwalan "
+        "CosineAnnealingLR, serta Early Stopping dengan patience 7)."
     )
     p(
-        "Tabel 4.2 menyajikan seluruh hasil numerik dari 11 eksperimen yang disalin langsung secara terprogram dari berkas "
-        "results/progress4/experiment_comparison.json tanpa pembulatan sepihak maupun manipulasi angka (nilai mentah 6 desimal "
-        "tersimpan lengkap dalam repositori)."
+        "Seluruh angka metrik pada Tabel 4.2 diambil langsung dari berkas hasil eksperimen results/progress4/experiment_comparison.json "
+        "agar konsisten dengan keluaran aktual pelatihan di Kaggle."
     )
 
     exp_rows = []
@@ -343,10 +341,10 @@ def _add_bab4_content(
         ))
 
     add_table(
-        ["Eksperimen", "Res.", "Best/Ep", "Tr.Loss", "Val.Loss", "Tr.Acc", "Val.Acc", "Gap", "Val F1", "Prec.", "Rec."],
+        ["Eksperimen", "Res.", "Best/Ep", "Tr.Loss", "Val.Loss", "Tr.Acc", "Val.Acc", "Selisih", "Val F1", "Prec.", "Rec."],
         exp_rows,
         [1.55, 0.36, 0.48, 0.49, 0.49, 0.51, 0.51, 0.48, 0.51, 0.47, 0.47],
-        caption_text="Tabel 4.2 Rekapitulasi Matriks Ablasi Lengkap EXP-01 s.d. EXP-11 pada Validation Set (Sumber: experiment_comparison.json)",
+        caption_text="Tabel 4.2 Perbandingan Hasil Pelatihan EXP-01 hingga EXP-11 pada Validation Set",
         highlight_rows=highlight_idx,
         compact=True,
     )
@@ -360,7 +358,7 @@ def _add_bab4_content(
             row_idx = len(h10_rows) + 1
             if r["epoch"] == exp10_summary["best_epoch"]:
                 h10_hl.add(row_idx)
-            stage_lbl = "Stage 1 (Head)" if r.get("stage", 1) == 1 else "Stage 2 (FT-4)"
+            stage_lbl = "Tahap 1 (Head)" if r.get("stage", 1) == 1 else "Tahap 2 (FT-4)"
             h10_rows.append((
                 f"{r['epoch']}",
                 stage_lbl,
@@ -376,44 +374,43 @@ def _add_bab4_content(
         ["Epoch", "Tahap Pelatihan", "LR Head", "Train Loss", "Val Loss", "Train Acc", "Val Acc", "Val Macro F1"],
         h10_rows,
         [0.45, 1.05, 0.72, 0.72, 0.72, 0.76, 0.76, 0.84],
-        caption_text="Tabel 4.3 Dinamika Pelatihan Per Epoch Kunci Model Terbaik Sementara EXP-10 (Stage 1 ke Stage 2)",
+        caption_text="Tabel 4.3 Perkembangan Metrik per Epoch Kunci pada Model EXP-10",
         highlight_rows=h10_hl,
         compact=True,
     )
 
     code_block(
-        "=== Cuplikan Log Asli Kaggle Version 3 (EXP-10 & EXP-11 Stage Transition) ===\n"
+        "Cuplikan log pelatihan Kaggle (transisi tahap EXP-10 dan EXP-11):\n"
         "EXP-08 & EXP-09 : Early stopping triggered at epoch 19 (best epoch: 12).\n"
-        "EXP-10 Epoch 9  : Stage 2 Transition @ epoch 9: loaded Stage 1 best (ep 3, val_macro_f1=0.7640)\n"
-        "                  Unfroze last 4 blocks | trainable(Stage 2)=1,336,561 | backbone_lr=5.00e-05, head_lr=1.50e-04\n"
-        "EXP-11 Epoch 9  : Stage 2 Transition @ epoch 9: loaded Stage 1 best (ep 7, val_macro_f1=0.7619)\n"
-        "                  Unfroze last 4 blocks | trainable(Stage 2)=1,336,561 | backbone_lr=5.00e-05, head_lr=1.50e-04"
+        "EXP-10 Epoch 9  : Stage 2 Transition at epoch 9: loaded Stage 1 best (ep 3, val_macro_f1=0.7640)\n"
+        "                  Unfroze last 4 blocks, trainable(Stage 2)=1,336,561, backbone_lr=5.00e-05, head_lr=1.50e-04\n"
+        "EXP-11 Epoch 9  : Stage 2 Transition at epoch 9: loaded Stage 1 best (ep 7, val_macro_f1=0.7619)\n"
+        "                  Unfroze last 4 blocks, trainable(Stage 2)=1,336,561, backbone_lr=5.00e-05, head_lr=1.50e-04"
     )
 
     figure(
         "p4_training_accuracy_f1_curves.png",
-        "Gambar 4.2 Kurva Validation Accuracy dan Validation Macro F1-Score per epoch untuk seluruh 11 eksperimen (EXP-01 s.d. EXP-11).",
+        "Gambar 4.2 Grafik akurasi validasi dan Macro F1-Score per epoch untuk seluruh 11 eksperimen.",
         width_inch=6.0,
     )
     figure(
         "p4_training_loss_curves.png",
-        "Gambar 4.3 Kurva Training Loss dan Validation Loss per epoch; tampak EXP-10 (ungu) menurunkan validation loss secara konsisten hingga epoch 30 (0,8703).",
+        "Gambar 4.3 Grafik training loss dan validation loss per epoch; validation loss EXP-10 turun konsisten hingga epoch 30 (0,8703).",
         width_inch=6.0,
     )
     figure(
         "p4_train_val_gap_comparison.png",
-        "Gambar 4.4 Perbandingan Train Accuracy, Validation Accuracy, Macro F1, dan gap overfitting (Train − Val Accuracy) seluruh eksperimen.",
+        "Gambar 4.4 Perbandingan akurasi latih, akurasi validasi, Macro F1, serta selisih akurasi latih dan validasi.",
         width_inch=6.0,
     )
 
     # Subbab 4.3
-    heading2("4.3 Hasil Prediksi Awal, Error Analysis, dan Kalibrasi pada Validation Set")
+    heading2("4.3 Hasil Prediksi Awal dan Evaluasi pada Validation Set")
     p(
-        f"Evaluasi komprehensif dilakukan secara eksklusif pada Validation Set (N={val_eval['validation_count']} citra) "
-        f"menggunakan checkpoint terbaik EXP-10 (epoch {exp10_summary['best_epoch']}). "
-        f"Model menghasilkan akurasi validasi {format_id_pct(metrics['accuracy'])}, Macro Precision "
-        f"{format_id_pct(metrics['macro_precision'])}, Macro Recall {format_id_pct(metrics['macro_recall'])}, "
-        f"dan Macro F1-Score {format_id_pct(metrics['macro_f1'])}."
+        f"Pengujian awal dilakukan pada Validation Set (N={val_eval['validation_count']} citra) menggunakan bobot "
+        f"terbaik EXP-10 dari epoch {exp10_summary['best_epoch']}. Model memperoleh akurasi validasi sebesar "
+        f"{format_id_pct(metrics['accuracy'])}, Macro Precision {format_id_pct(metrics['macro_precision'])}, "
+        f"Macro Recall {format_id_pct(metrics['macro_recall'])}, dan Macro F1-Score {format_id_pct(metrics['macro_f1'])}."
     )
 
     per_class_rows = []
@@ -426,7 +423,7 @@ def _add_bab4_content(
             format_id_pct(vals["f1"], 2),
         ))
     per_class_rows.append((
-        "Macro Average / Total",
+        "Rata-rata Makro / Total",
         f"{val_eval['validation_count']}",
         format_id_pct(metrics["macro_precision"], 2),
         format_id_pct(metrics["macro_recall"], 2),
@@ -437,18 +434,18 @@ def _add_bab4_content(
         ["Kelas Material", "Support", "Precision", "Recall", "F1-Score"],
         per_class_rows,
         [2.1, 0.85, 1.05, 1.05, 1.05],
-        caption_text="Tabel 4.4 Metrik Klasifikasi Per Kelas Model EXP-10 pada Validation Set (713 Sampel)",
+        caption_text="Tabel 4.4 Performa Klasifikasi Per Kelas Model EXP-10 pada Validation Set (713 Sampel)",
         highlight_rows={len(per_class_rows)},
     )
 
     figure(
         "p4_val_confusion_matrix.png",
-        "Gambar 4.5 Confusion matrix model EXP-10 pada Validation Set (713 sampel); kesalahan dominan terjadi pada Plastic -> Metal (26 sampel) dan Paper -> Cardboard (16 sampel).",
+        "Gambar 4.5 Confusion matrix EXP-10 pada Validation Set (713 sampel); salah klasifikasi terbanyak terjadi pada Plastic yang diprediksi sebagai Metal (26 sampel) dan Paper sebagai Cardboard (16 sampel).",
         width_inch=5.3,
     )
     figure(
         "p4_val_per_class_metrics.png",
-        "Gambar 4.6 Perbandingan Precision, Recall, dan F1-Score per kelas pada Validation Set (EXP-10); Vegetation (96,18%) dan Food Organics (91,80%) tertinggi, sedangkan Miscellaneous Trash (68,09%) dan Plastic (69,46%) terendah.",
+        "Gambar 4.6 Perbandingan Precision, Recall, dan F1-Score tiap kelas pada Validation Set (EXP-10).",
         width_inch=5.9,
     )
 
@@ -476,101 +473,98 @@ def _add_bab4_content(
         ["Berkas Sampel (Validation)", "Label Sebenarnya", "Prediksi Model", "Confidence", "Status"],
         rep_rows,
         [2.25, 1.35, 1.25, 0.72, 0.63],
-        caption_text="Tabel 4.5 Cuplikan 10 Sampel Prediksi Validation Set EXP-10 (5 Benar Tertinggi & 5 Salah Overconfident)",
+        caption_text="Tabel 4.5 Contoh 10 Sampel Prediksi Model EXP-10 pada Validation Set (5 Benar dan 5 Salah)",
         compact=True,
     )
 
     p(
-        f"Audit Kalibrasi Confidence (Gambar 4.7): Model EXP-10 menunjukkan tingkat kalibrasi probabilitas yang sangat baik "
-        f"dengan Expected Calibration Error (ECE 10-bin) sebesar {format_id_num(cal['ece_10_bins'], 4)}. Dari total "
-        f"{cal['total_samples']} sampel validasi, {cal['correct_count']} prediksi benar memiliki rata-rata confidence "
-        f"{format_id_num(cal['correct_confidence']['mean'], 4)} (median {format_id_num(cal['correct_confidence']['median'], 4)}), "
-        f"jauh di atas {cal['wrong_count']} prediksi salah yang memiliki rata-rata confidence {format_id_num(cal['wrong_confidence']['mean'], 4)} "
-        f"(median {format_id_num(cal['wrong_confidence']['median'], 4)}). Namun demikian, terdeteksi {cal['overconfident_wrong_gt_090']} kasus "
-        f"({format_id_pct(cal['overconfident_wrong_ratio'], 2)} dari seluruh error) yang berstatus overconfident wrong (confidence > 0,90), "
-        f"seperti Plastic/Plastic_256.jpg yang diprediksi Metal dengan confidence 0,9926."
+        f"Selain akurasi, pemeriksaan kalibrasi probabilitas (Gambar 4.7) menunjukkan nilai Expected Calibration Error "
+        f"(ECE 10-bin) sebesar {format_id_num(cal['ece_10_bins'], 4)}. Dari total {cal['total_samples']} sampel validasi, "
+        f"{cal['correct_count']} prediksi benar memiliki rata-rata nilai confidence {format_id_num(cal['correct_confidence']['mean'], 4)} "
+        f"(median {format_id_num(cal['correct_confidence']['median'], 4)}), sedangkan {cal['wrong_count']} prediksi salah memiliki "
+        f"rata-rata confidence {format_id_num(cal['wrong_confidence']['mean'], 4)} (median {format_id_num(cal['wrong_confidence']['median'], 4)}). "
+        f"Meskipun demikian, masih ditemukan {cal['overconfident_wrong_gt_090']} kesalahan ({format_id_pct(cal['overconfident_wrong_ratio'], 2)} "
+        f"dari total kesalahan) yang memiliki confidence di atas 0,90, seperti citra Plastic/Plastic_256.jpg yang keliru diprediksi "
+        f"sebagai Metal dengan confidence 0,9926."
     )
 
     figure(
         "p4_confidence_calibration.png",
-        "Gambar 4.7 Distribusi confidence prediksi benar vs salah dan diagram reliabilitas kalibrasi 10-bin EXP-10 (ECE = 0,0282).",
+        "Gambar 4.7 Distribusi confidence prediksi benar dan salah serta diagram reliabilitas kalibrasi 10-bin EXP-10 (ECE = 0,0282).",
         width_inch=6.0,
     )
 
     # Subbab 4.4
-    heading2("4.4 Analisis dan Pembahasan Kritis")
-    list_item(
-        "CNN Baseline 3-blok (102.089 parameter) mengalami underfitting kronis pada seluruh varian (EXP-01: 49,00%, "
-        "EXP-02: 40,96%, EXP-03: 48,55%, dan EXP-07 yang diperpanjang dengan Cosine LR: 46,08% Macro F1). Kapasitas representasi "
-        "3 lapisan konvolusi yang dilatih dari bobot acak pada 3.327 citra tidak memadai untuk memisahkan kelas sampah dengan latar heterogen.",
-        bold_prefix="1. Keterbatasan Arsitektur Dari Nol (Underfitting CNN Baseline): ",
+    heading2("4.4 Analisis dan Pembahasan Awal")
+    p(
+        "Berdasarkan perbandingan hasil eksperimen pada Tabel 4.2, arsitektur CNN Baseline 3-blok (102.089 parameter) "
+        "mengalami underfitting pada seluruh skenario (EXP-01 mencapai 49,00%, EXP-02 sebesar 40,96%, EXP-03 sebesar 48,55%, "
+        "dan EXP-07 sebesar 46,08% Macro F1). Kapasitas representasi tiga lapis konvolusi yang dilatih dari nol pada 3.327 citra "
+        "belum mencukupi untuk membedakan variasi latar belakang dan tekstur sampah dunia nyata."
     )
-    list_item(
-        "Pada resolusi 128×128, EXP-04 mencapai 71,93% Macro F1 tetapi mengalami overfitting tajam (Train Acc 98,41% vs Val Acc 71,25%, "
-        "gap 27,16%) dan validation loss mulai memantul naik setelah epoch ke-13 (0,9599 menjadi 1,0546 pada epoch 30). "
-        "Penambahan regularisasi agresif pada EXP-05 (Dropout 0,4, WD 0,05, Label Smoothing 0,05) menurunkan gap menjadi 14,16%, "
-        "namun tetap tertahan di 70,82% Macro F1 akibat hilangnya detail tekstur di resolusi 128×128.",
-        bold_prefix="2. Efek Peningkatan Resolusi 224×224 dan 2-Stage Fine-Tuning: ",
+    p(
+        "Pemanfaatan transfer learning MobileNetV3-Small pada resolusi 128×128 (EXP-04) mampu menaikkan Macro F1 ke 71,93%, "
+        "tetapi mengalami overfitting berat dengan akurasi latih 98,41% berbanding akurasi validasi 71,25% (selisih 27,16%) "
+        "dan validation loss mulai naik kembali setelah epoch ke-13 (0,9599 menjadi 1,0546 pada epoch 30). Penambahan regularisasi "
+        "ketat pada EXP-05 (Dropout 0,4, weight decay 0,05, label smoothing 0,05) menurunkan selisih tersebut menjadi 14,16%, "
+        "tetapi Macro F1 bertahan di 70,82% karena keterbatasan detail piksel pada ukuran 128×128."
     )
-    list_item(
-        f"Meningkatkan input ke 224×224 pada EXP-08 dan EXP-09 langsung melampaui seluruh baseline 128×128 (+4,32% dan +4,71% "
-        f"Macro F1 dibanding EXP-04), sekaligus menurunkan validation loss EXP-08 hingga 0,7844. Ketika dilanjutkan dengan strategi "
-        f"2-Stage Fine-Tuning pada EXP-10 (Stage 1 melatih head 8 epoch di lr=1e-3, lalu Stage 2 membuka 4 blok backbone akhir dengan "
-        f"differential LR 5e-5/1,5e-4 + warmup 2 epoch + Cosine LR), Val Macro F1 melonjak sebesar +{f1_gain:.2f}% poin dibanding "
-        f"EXP-04 (dari 71,93% menjadi {format_id_pct(exp10['best_val_macro_f1'])}), dengan Val Accuracy {format_id_pct(exp10['best_val_accuracy'])}, "
-        f"Val Loss {format_id_num(exp10['best_val_loss'], 4)} yang terus menurun stabil sampai epoch 30 tanpa divergensi, serta kalibrasi ECE "
-        f"{format_id_num(cal['ece_10_bins'], 4)}. Sementara penambahan class weighting pada EXP-11 meningkatkan Macro Recall ke "
-        f"{format_id_pct(exp11['best_val_macro_recall'])} tetapi menghasilkan Macro F1 sedikit lebih rendah ({format_id_pct(exp11['best_val_macro_f1'])}).",
-        bold_prefix="3. Keberhasilan EXP-10 sebagai Model Terbaik Sementara: ",
+    p(
+        f"Ketika resolusi dinaikkan menjadi 224×224 pada EXP-08 dan EXP-09, performa validasi langsung meningkat ke 76,25% "
+        f"dan 76,64% Macro F1 serta menurunkan validation loss EXP-08 hingga 0,7844. Penggabungan resolusi 224×224 dengan "
+        f"strategi two-stage fine-tuning pada EXP-10 menghasilkan peningkatan Macro F1 sebesar {f1_gain:.2f} poin persentase "
+        f"dibanding EXP-04 (menjadi {format_id_pct(exp10['best_val_macro_f1'])}), dengan akurasi validasi {format_id_pct(exp10['best_val_accuracy'])}, "
+        f"validation loss {format_id_num(exp10['best_val_loss'], 4)} yang terus menurun stabil sampai epoch 30, dan ECE {format_id_num(cal['ece_10_bins'], 4)}. "
+        f"Penggunaan bobot kelas pada EXP-11 menghasilkan Macro Recall sedikit lebih tinggi ({format_id_pct(exp11['best_val_macro_recall'])}), "
+        f"namun Macro F1-nya ({format_id_pct(exp11['best_val_macro_f1'])}) berada tipis di bawah EXP-10."
     )
-    list_item(
-        f"Secara jujur dan ilmiah, meskipun gap overfitting berhasil ditekan sebesar {gap_drop:.2f}% poin dibanding baseline EXP-04 "
-        f"(27,16% -> {format_id_pct(exp10['train_val_acc_gap'])}), target kualitatif Train–Val gap <= 10% BELUM tercapai pada varian "
-        f"MobileNetV3 terbaik. Pembukaan 4 blok akhir menjadikan jumlah parameter trainable sebesar 1.336.561 terhadap hanya 3.327 citra "
-        f"latih sehingga Train Accuracy kembali mencapai {format_id_pct(exp10['best_train_accuracy'])}. Selain itu, 3 kelas terlemah "
-        f"({err['weakest_3_classes'][0]['class']} F1 {format_id_pct(err['weakest_3_classes'][0]['f1'])}, "
-        f"{err['weakest_3_classes'][1]['class']} F1 {format_id_pct(err['weakest_3_classes'][1]['f1'])} dengan recall rendah 60,14%, "
-        f"dan {err['weakest_3_classes'][2]['class']} F1 {format_id_pct(err['weakest_3_classes'][2]['f1'])}) menunjukkan bahwa "
-        f"kesalahan dominan Plastic -> Metal (26 sampel, naik dari 22 sampel pada EXP-04), Paper -> Cardboard (16 sampel), dan "
-        f"Misc. Trash -> Textile Trash (12 sampel) belum terselesaikan hanya oleh peningkatan resolusi karena pantulan cahaya spekular "
-        f"pada plastik kemasan tipis menyerupai kilap logam.",
-        bold_prefix="4. Keterbatasan Jujur (Gap Overfitting 19,40% dan Kebingungan Plastic -> Metal): ",
+    p(
+        f"Meskipun selisih akurasi latih dan validasi pada EXP-10 berkurang sebesar {gap_drop:.2f} poin persentase dibanding "
+        f"EXP-04 (dari 27,16% menjadi {format_id_pct(exp10['train_val_acc_gap'])}), angka tersebut masih di atas batas target 10%. "
+        f"Pembukaan empat blok terakhir membuat jumlah parameter yang dilatih mencapai 1.336.561 untuk 3.327 citra latih sehingga "
+        f"akurasi latih kembali mendekati jenuh ({format_id_pct(exp10['best_train_accuracy'])}). Selain itu, performa tiga kelas "
+        f"terlemah yaitu {err['weakest_3_classes'][0]['class']} (F1 {format_id_pct(err['weakest_3_classes'][0]['f1'])}), "
+        f"{err['weakest_3_classes'][1]['class']} (F1 {format_id_pct(err['weakest_3_classes'][1]['f1'])}, recall 60,14%), "
+        f"dan {err['weakest_3_classes'][2]['class']} (F1 {format_id_pct(err['weakest_3_classes'][2]['f1'])}) menunjukkan bahwa "
+        f"kesalahan dominan berupa Plastic yang diprediksi sebagai Metal (26 sampel, berbanding 22 sampel pada EXP-04), Paper "
+        f"sebagai Cardboard (16 sampel), dan Miscellaneous Trash sebagai Textile Trash (12 sampel). Kemasan plastik yang memantulkan "
+        f"cahaya kerap tampak menyerupai permukaan logam."
     )
 
     # Subbab 4.5
-    heading2("4.5 Kendala, Keputusan Model Sementara, dan Rencana Perbaikan Progres 5")
+    heading2("4.5 Kendala dan Rencana Perbaikan Progres 5")
     p(
-        "Berdasarkan hasil audit empiris di atas, ditetapkan Opsi B untuk Progres 4: EXP-10 (Val Macro F1 79,16%, "
-        "Val Loss 0,8703, ECE 0,0282) dikunci sebagai model terbaik sementara, sedangkan Test Set (712 citra) tetap "
-        "terkunci hingga Progres 5 agar tidak terjadi kebocoran seleksi model. Tabel 4.6 merangkum kendala tersisa dan "
-        "rencana perbaikan terukur untuk Progres 5."
+        "Berdasarkan hasil evaluasi pada Validation Set, model EXP-10 (Val Macro F1 79,16%, Val Loss 0,8703, ECE 0,0282) "
+        "ditetapkan sebagai model terbaik sementara pada tahap Progres 4. Sementara itu, Test Set (712 citra) tetap dipertahankan "
+        "dalam keadaan terkunci hingga tahap akhir Progres 5. Tabel 4.6 merangkum kendala yang masih ditemukan beserta rencana "
+        "perbaikannya untuk Progres 5."
     )
 
     add_table(
-        ["Kendala Aktual pada Progres 4", "Bukti Kuantitatif", "Rencana Perbaikan Progres 5"],
+        ["Kendala pada Progres 4", "Bukti Kuantitatif", "Rencana Perbaikan Progres 5"],
         [
-            ("Train–Val Accuracy Gap masih > 10% pada EXP-10", "Train Acc 97,39% vs Val Acc 77,98% (Gap 19,40%; 1,34M param trainable)", "Uji penyempitan kapasitas fine-tuning (unfreeze_last_n=2) serta regularisasi MixUp / RandomErasing (Opsi A) untuk menekan gap <= 10%."),
-            ("Kesalahan dominan Plastic -> Metal dan Paper -> Cardboard", "Plastic -> Metal = 26 sampel (Recall Plastic 60,14%); Paper -> Cardboard = 16 sampel; 15 error > 0,90 conf", "Tambahkan analisis visual Grad-CAM pada kesalahan overconfident untuk memverifikasi fokus fitur objek vs pantulan spekular/latar."),
-            ("Validasi final performa generalisasi belum diuji pada Test Set", "Seluruh 11 eksperimen hanya dievaluasi pada 713 sampel Validation Set (test_used=false)", "Evaluasi tunggal (one-shot final test) pada 712 citra Test Set yang terkunci setelah kandidat final Progres 5 ditetapkan."),
+            ("Selisih akurasi latih dan validasi pada EXP-10 masih melebihi 10%", "Akurasi latih 97,39% vs validasi 77,98% (selisih 19,40% dengan 1,34 juta parameter dilatih)", "Menguji pembukaan blok yang lebih sempit (unfreeze_last_n=2) serta menambahkan regularisasi MixUp dan RandomErasing untuk menekan selisih akurasi."),
+            ("Kesalahan dominan pada kelas Plastic menjadi Metal dan Paper menjadi Cardboard", "Plastic diprediksi Metal sebanyak 26 sampel (recall Plastic 60,14%), Paper menjadi Cardboard 16 sampel, serta 15 salah prediksi dengan confidence di atas 0,90", "Menerapkan analisis visual Grad-CAM untuk memeriksa bagian citra yang menjadi fokus model pada sampel salah prediksi."),
+            ("Generalisasi akhir belum diuji pada Test Set", "Seluruh 11 eksperimen dievaluasi hanya pada 713 sampel Validation Set (test_used bernilai false)", "Melakukan pengujian tunggal pada 712 citra Test Set setelah konfigurasi model final di Progres 5 ditetapkan."),
         ],
         [1.8, 1.9, 2.5],
-        caption_text="Tabel 4.6 Matriks Kendala Aktual dan Rencana Aksi Progres 5",
+        caption_text="Tabel 4.6 Kendala Pelatihan dan Rencana Perbaikan untuk Progres 5",
     )
 
     heading1("CHECKLIST EVALUASI SEBELUM PENGUMPULAN (PROGRES 4)")
     add_table(
-        ["Kriteria Evaluasi Progres 4", "Status Verifikasi", "Bukti Nyata dalam Laporan dan Repositori"],
+        ["Kriteria Evaluasi Progres 4", "Status", "Keterangan Bukti pada Laporan dan Repositori"],
         [
-            ("Naskah BAB I, II, dan III dipertahankan utuh", "[ V ] TERPENUHI", "Seluruh halaman BAB I-III dari Progres 3 dipertahankan utuh sebelum BAB IV."),
-            ("Bukti kode berjalan dan reproducibility lengkap", "[ V ] TERPENUHI", "Seed=42, PyTorch 2.11.0+cu130, commit c29d5b6, pytest 14 passed di log Kaggle."),
-            ("Seluruh hasil ablasi disajikan apa adanya dari JSON asli", "[ V ] TERPENUHI", "Tabel 4.2 memuat 11 eksperimen (EXP-01..EXP-11) langsung dari experiment_comparison.json."),
-            ("Grafik akurasi, F1, loss, dan gap disertakan", "[ V ] TERPENUHI", "Gambar 4.1 s.d. 4.4 menampakkan sanity check batch, kurva epoch, dan gap perbandingan."),
-            ("Confusion matrix, per-class metrics, & 10 sampel prediksi", "[ V ] TERPENUHI", "Gambar 4.5-4.6 serta Tabel 4.4-4.5 berbasis val_best_model_evaluation.json."),
-            ("Audit kalibrasi dan kejujuran keterbatasan ilmiah", "[ V ] TERPENUHI", "Gambar 4.7 (ECE 0,0282) dan Subbab 4.4 mencatat jujur gap 19,40% & 26 kasus Plastic->Metal."),
-            ("Kunci integritas Test Set tetap terjaga", "[ V ] TERPENUHI", "Test Set 712 citra terkunci (test_set_untouched=true) hingga evaluasi final Progres 5."),
+            ("Naskah BAB I, II, dan III dipertahankan utuh", "Terpenuhi", "Seluruh isi BAB I hingga BAB III dari Progres 3 dipertahankan sebelum BAB IV."),
+            ("Bukti kode berjalan dan reproduksibilitas tercatat", "Terpenuhi", "Seed=42, PyTorch 2.11.0+cu130, commit c29d5b6, dan pytest lulus 14 pengujian."),
+            ("Seluruh hasil ablasi disajikan sesuai keluaran JSON", "Terpenuhi", "Tabel 4.2 memuat 11 eksperimen (EXP-01 hingga EXP-11) dari experiment_comparison.json."),
+            ("Grafik akurasi, F1, loss, dan selisih akurasi disertakan", "Terpenuhi", "Gambar 4.1 hingga 4.4 menampilkan contoh prapemrosesan, kurva pelatihan, dan perbandingan selisih akurasi."),
+            ("Confusion matrix, metrik per kelas, dan contoh prediksi disajikan", "Terpenuhi", "Gambar 4.5, Gambar 4.6, Tabel 4.4, dan Tabel 4.5 merujuk pada val_best_model_evaluation.json."),
+            ("Pembahasan keterbatasan model disampaikan secara objektif", "Terpenuhi", "Gambar 4.7 (ECE 0,0282) dan Subbab 4.4 menjelaskan selisih 19,40% serta 26 kasus Plastic ke Metal."),
+            ("Data uji (Test Set) tetap dijaga agar tidak bocor", "Terpenuhi", "Sebanyak 712 citra Test Set tetap terkunci (test_set_untouched=true) hingga Progres 5."),
         ],
-        [2.1, 1.25, 2.85],
-        caption_text="Tabel 4.7 Checklist Kepatuhan Rubrik Evaluasi Penugasan Progres 4",
+        [2.1, 1.0, 3.1],
+        caption_text="Tabel 4.7 Checklist Evaluasi Progres 4",
     )
 
 

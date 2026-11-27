@@ -26,7 +26,7 @@ tmp/
 kaggle.json
 access_token
 kaggle/kernel-metadata.json
-results/kaggle_run/
+results/kaggle_run*/
 *.npy
 *.npz
 laporan/*_Aptos.docx

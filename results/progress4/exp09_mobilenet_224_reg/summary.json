@@ -1,0 +1,54 @@
+{
+  "spec": {
+    "exp_id": "exp09_mobilenet_224_reg",
+    "title": "EXP-09: MobileNetV3 224x224 + Reg Terukur",
+    "model_name": "mobilenet_v3_small",
+    "optimizer_name": "AdamW",
+    "lr": 0.0003,
+    "weight_decay": 0.02,
+    "batch_size": 32,
+    "max_epochs": 25,
+    "augment": true,
+    "class_weighting": false,
+    "pretrained": true,
+    "freeze_backbone": true,
+    "dropout": 0.35,
+    "image_size": 224,
+    "unfreeze_last_n": 0,
+    "label_smoothing": 0.05,
+    "use_cosine_lr": true,
+    "backbone_lr_mult": 0.3,
+    "stage1_epochs": 0,
+    "stage1_lr": 0.001,
+    "warmup_epochs": 0,
+    "val_loss_guard_delta": 0.1
+  },
+  "environment": {
+    "device": "cuda",
+    "cuda_device_name": "Tesla T4",
+    "torch_version": "2.11.0+cu130",
+    "git_commit": "c29d5b6",
+    "seed": 42
+  },
+  "model_stats": {
+    "total_parameters": 1527081,
+    "trainable_parameters": 600073
+  },
+  "dataset_counts": {
+    "train": 3327,
+    "validation": 713,
+    "test_used": false
+  },
+  "best_epoch": 12,
+  "best_train_loss": 0.560558,
+  "best_train_accuracy": 0.913135,
+  "best_val_loss": 0.925924,
+  "best_val_accuracy": 0.755961,
+  "best_val_macro_f1": 0.766422,
+  "best_val_macro_precision": 0.779454,
+  "best_val_macro_recall": 0.766367,
+  "train_val_acc_gap": 0.157174,
+  "epochs_ran": 19,
+  "total_training_seconds": 212.65,
+  "best_checkpoint": "/kaggle/working/progress4_results/exp09_mobilenet_224_reg/best_model.pt"
+}

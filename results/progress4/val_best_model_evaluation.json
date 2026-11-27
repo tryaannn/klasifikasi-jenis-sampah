@@ -2,247 +2,387 @@
   "evaluation_split": "validation_only",
   "test_set_untouched": true,
   "validation_count": 713,
+  "reproducibility": {
+    "seed": 42,
+    "torch_version": "2.11.0+cu130",
+    "git_commit": "c29d5b6"
+  },
   "best_experiment": {
-    "exp_id": "exp04_mobilenet_tl",
-    "title": "EXP-04: MobileNetV3-Small Transfer Learning",
+    "exp_id": "exp10_mobilenet_224_2stage_ft",
+    "title": "EXP-10: MobileNetV3 224x224 2-Stage FT",
     "model_name": "mobilenet_v3_small",
-    "best_epoch": 30
+    "image_size": 224,
+    "best_epoch": 30,
+    "train_val_acc_gap": 0.194046
   },
   "metrics": {
-    "accuracy": 0.712482,
-    "macro_precision": 0.721797,
-    "macro_recall": 0.727128,
-    "macro_f1": 0.719335,
+    "accuracy": 0.779804,
+    "macro_precision": 0.795064,
+    "macro_recall": 0.801678,
+    "macro_f1": 0.791621,
     "confusion_matrix": [
       [
-        38,
-        2,
-        2,
-        6,
-        1,
-        8,
+        50,
+        0,
+        0,
         7,
-        3,
+        2,
+        2,
+        4,
+        2,
         2
       ],
       [
-        1,
-        45,
-        1,
-        1,
-        2,
         0,
-        7,
-        4,
+        56,
+        0,
+        1,
+        1,
+        0,
+        3,
+        0,
         1
       ],
       [
-        0,
-        0,
-        54,
         1,
         0,
-        1,
-        7,
+        56,
+        2,
+        0,
+        0,
+        4,
         0,
         0
       ],
       [
+        2,
+        0,
         3,
+        105,
+        3,
+        2,
+        4,
+        0,
+        0
+      ],
+      [
+        0,
+        2,
         0,
         9,
-        85,
-        11,
+        48,
         1,
-        8,
+        2,
+        12,
+        0
+      ],
+      [
+        16,
+        0,
+        0,
+        4,
+        1,
+        51,
+        1,
         2,
         0
       ],
       [
-        2,
-        0,
-        1,
-        4,
-        43,
         3,
-        6,
-        13,
-        2
-      ],
-      [
-        7,
-        0,
-        1,
-        3,
-        1,
-        57,
-        3,
-        3,
-        0
-      ],
-      [
-        1,
         0,
         8,
-        22,
-        11,
-        4,
-        87,
+        26,
+        10,
+        3,
+        83,
         5,
         0
       ],
       [
-        2,
         1,
+        1,
+        0,
         0,
         1,
         1,
-        4,
-        1,
-        37,
-        1
+        0,
+        44,
+        0
       ],
       [
         0,
-        2,
+        1,
         0,
         0,
         1,
         0,
         0,
         0,
-        62
+        63
       ]
     ],
     "per_class": {
       "Cardboard": {
-        "precision": 0.703704,
-        "recall": 0.550725,
-        "f1": 0.617886,
+        "precision": 0.684932,
+        "recall": 0.724638,
+        "f1": 0.704225,
         "support": 69
       },
       "Food Organics": {
-        "precision": 0.9,
-        "recall": 0.725806,
-        "f1": 0.803571,
+        "precision": 0.933333,
+        "recall": 0.903226,
+        "f1": 0.918033,
         "support": 62
       },
       "Glass": {
-        "precision": 0.710526,
-        "recall": 0.857143,
-        "f1": 0.776978,
+        "precision": 0.835821,
+        "recall": 0.888889,
+        "f1": 0.861538,
         "support": 63
       },
       "Metal": {
-        "precision": 0.691057,
-        "recall": 0.714286,
-        "f1": 0.702479,
+        "precision": 0.681818,
+        "recall": 0.882353,
+        "f1": 0.769231,
         "support": 119
       },
       "Miscellaneous Trash": {
-        "precision": 0.605634,
-        "recall": 0.581081,
-        "f1": 0.593103,
+        "precision": 0.716418,
+        "recall": 0.648649,
+        "f1": 0.680851,
         "support": 74
       },
       "Paper": {
-        "precision": 0.730769,
-        "recall": 0.76,
-        "f1": 0.745098,
+        "precision": 0.85,
+        "recall": 0.68,
+        "f1": 0.755556,
         "support": 75
       },
       "Plastic": {
-        "precision": 0.690476,
-        "recall": 0.630435,
-        "f1": 0.659091,
+        "precision": 0.821782,
+        "recall": 0.601449,
+        "f1": 0.694561,
         "support": 138
       },
       "Textile Trash": {
-        "precision": 0.552239,
-        "recall": 0.770833,
-        "f1": 0.643478,
+        "precision": 0.676923,
+        "recall": 0.916667,
+        "f1": 0.778761,
         "support": 48
       },
       "Vegetation": {
-        "precision": 0.911765,
-        "recall": 0.953846,
-        "f1": 0.932331,
+        "precision": 0.954545,
+        "recall": 0.969231,
+        "f1": 0.961832,
         "support": 65
       }
     }
   },
+  "error_analysis": {
+    "weakest_3_classes": [
+      {
+        "class": "Miscellaneous Trash",
+        "precision": 0.716418,
+        "recall": 0.648649,
+        "f1": 0.680851,
+        "support": 74
+      },
+      {
+        "class": "Plastic",
+        "precision": 0.821782,
+        "recall": 0.601449,
+        "f1": 0.694561,
+        "support": 138
+      },
+      {
+        "class": "Cardboard",
+        "precision": 0.684932,
+        "recall": 0.724638,
+        "f1": 0.704225,
+        "support": 69
+      }
+    ],
+    "top_3_confusion_pairs": [
+      {
+        "true_class": "Plastic",
+        "pred_class": "Metal",
+        "count": 26
+      },
+      {
+        "true_class": "Paper",
+        "pred_class": "Cardboard",
+        "count": 16
+      },
+      {
+        "true_class": "Miscellaneous Trash",
+        "pred_class": "Textile Trash",
+        "count": 12
+      }
+    ],
+    "plastic_to_metal_count": 26
+  },
+  "calibration": {
+    "ece_10_bins": 0.028151,
+    "total_samples": 713,
+    "correct_count": 556,
+    "wrong_count": 157,
+    "correct_confidence": {
+      "mean": 0.8451,
+      "median": 0.9255
+    },
+    "wrong_confidence": {
+      "mean": 0.616,
+      "median": 0.5956
+    },
+    "overconfident_wrong_gt_090": 15,
+    "overconfident_wrong_ratio": 0.0955,
+    "reliability_bins": [
+      {
+        "bin_range": [
+          0.2,
+          0.3
+        ],
+        "count": 4,
+        "accuracy": 0.0,
+        "avg_confidence": 0.2838
+      },
+      {
+        "bin_range": [
+          0.3,
+          0.4
+        ],
+        "count": 36,
+        "accuracy": 0.4444,
+        "avg_confidence": 0.3599
+      },
+      {
+        "bin_range": [
+          0.4,
+          0.5
+        ],
+        "count": 46,
+        "accuracy": 0.4783,
+        "avg_confidence": 0.4534
+      },
+      {
+        "bin_range": [
+          0.5,
+          0.6
+        ],
+        "count": 61,
+        "accuracy": 0.4754,
+        "avg_confidence": 0.5454
+      },
+      {
+        "bin_range": [
+          0.6,
+          0.7
+        ],
+        "count": 70,
+        "accuracy": 0.6571,
+        "avg_confidence": 0.6491
+      },
+      {
+        "bin_range": [
+          0.7,
+          0.8
+        ],
+        "count": 70,
+        "accuracy": 0.7,
+        "avg_confidence": 0.7492
+      },
+      {
+        "bin_range": [
+          0.8,
+          0.9
+        ],
+        "count": 101,
+        "accuracy": 0.8317,
+        "avg_confidence": 0.8494
+      },
+      {
+        "bin_range": [
+          0.9,
+          1.0
+        ],
+        "count": 325,
+        "accuracy": 0.9538,
+        "avg_confidence": 0.9682
+      }
+    ]
+  },
   "representative_samples": {
     "correct_examples": [
       {
-        "file": "Cardboard/Cardboard_456.jpg",
-        "true_label": "Cardboard",
-        "pred_label": "Cardboard",
-        "confidence": 1.0,
+        "file": "Plastic/Plastic_136.jpg",
+        "true_label": "Plastic",
+        "pred_label": "Plastic",
+        "confidence": 0.9998,
+        "correct": true
+      },
+      {
+        "file": "Miscellaneous Trash/Miscellaneous Trash_309.jpg",
+        "true_label": "Miscellaneous Trash",
+        "pred_label": "Miscellaneous Trash",
+        "confidence": 0.9996,
+        "correct": true
+      },
+      {
+        "file": "Vegetation/Vegetation_156.jpg",
+        "true_label": "Vegetation",
+        "pred_label": "Vegetation",
+        "confidence": 0.9994,
         "correct": true
       },
       {
         "file": "Vegetation/Vegetation_161.jpg",
         "true_label": "Vegetation",
         "pred_label": "Vegetation",
-        "confidence": 1.0,
+        "confidence": 0.9994,
         "correct": true
       },
       {
-        "file": "Vegetation/Vegetation_18.jpg",
-        "true_label": "Vegetation",
-        "pred_label": "Vegetation",
-        "confidence": 1.0,
-        "correct": true
-      },
-      {
-        "file": "Food Organics/Food Organics_164.jpg",
-        "true_label": "Food Organics",
-        "pred_label": "Food Organics",
-        "confidence": 0.9999,
-        "correct": true
-      },
-      {
-        "file": "Glass/Glass_152.jpg",
-        "true_label": "Glass",
-        "pred_label": "Glass",
-        "confidence": 0.9999,
+        "file": "Miscellaneous Trash/Miscellaneous Trash_105.jpg",
+        "true_label": "Miscellaneous Trash",
+        "pred_label": "Miscellaneous Trash",
+        "confidence": 0.9991,
         "correct": true
       }
     ],
     "misclassified_examples": [
       {
-        "file": "Plastic/Plastic_125.jpg",
+        "file": "Plastic/Plastic_256.jpg",
         "true_label": "Plastic",
-        "pred_label": "Glass",
-        "confidence": 0.9992,
+        "pred_label": "Metal",
+        "confidence": 0.9926,
+        "correct": false
+      },
+      {
+        "file": "Plastic/Plastic_337.jpg",
+        "true_label": "Plastic",
+        "pred_label": "Metal",
+        "confidence": 0.9493,
+        "correct": false
+      },
+      {
+        "file": "Miscellaneous Trash/Miscellaneous Trash_139.jpg",
+        "true_label": "Miscellaneous Trash",
+        "pred_label": "Textile Trash",
+        "confidence": 0.9482,
+        "correct": false
+      },
+      {
+        "file": "Plastic/Plastic_258.jpg",
+        "true_label": "Plastic",
+        "pred_label": "Metal",
+        "confidence": 0.9459,
         "correct": false
       },
       {
         "file": "Plastic/Plastic_103.jpg",
         "true_label": "Plastic",
         "pred_label": "Textile Trash",
-        "confidence": 0.9962,
-        "correct": false
-      },
-      {
-        "file": "Food Organics/Food Organics_132.jpg",
-        "true_label": "Food Organics",
-        "pred_label": "Plastic",
-        "confidence": 0.9944,
-        "correct": false
-      },
-      {
-        "file": "Miscellaneous Trash/Miscellaneous Trash_175.jpg",
-        "true_label": "Miscellaneous Trash",
-        "pred_label": "Textile Trash",
-        "confidence": 0.9944,
-        "correct": false
-      },
-      {
-        "file": "Paper/Paper_17.jpg",
-        "true_label": "Paper",
-        "pred_label": "Metal",
-        "confidence": 0.9938,
+        "confidence": 0.9446,
         "correct": false
       }
     ]
@@ -252,6 +392,7 @@
     "loss_curves": "/kaggle/working/progress4_figures/p4_training_loss_curves.png",
     "val_confusion_matrix": "/kaggle/working/progress4_figures/p4_val_confusion_matrix.png",
     "val_per_class_metrics": "/kaggle/working/progress4_figures/p4_val_per_class_metrics.png",
-    "train_val_gap_comparison": "/kaggle/working/progress4_figures/p4_train_val_gap_comparison.png"
+    "train_val_gap_comparison": "/kaggle/working/progress4_figures/p4_train_val_gap_comparison.png",
+    "confidence_calibration": "/kaggle/working/progress4_figures/p4_confidence_calibration.png"
   }
 }

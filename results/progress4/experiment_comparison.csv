@@ -1,8 +1,12 @@
-exp_id,title,model_name,augment,class_weighting,unfreeze_last_n,best_epoch,epochs_ran,best_train_accuracy,best_val_loss,best_val_accuracy,train_val_acc_gap,best_val_macro_f1,total_training_seconds
-exp01_cnn_control,EXP-01: CNN Baseline Kontrol,cnn_baseline,False,False,0,30,30,0.56838,1.41307,0.493689,0.074691,0.489959,111.35
-exp02_cnn_aug,EXP-02: CNN Baseline + Augmentasi,cnn_baseline,True,False,0,29,30,0.528404,1.604104,0.42777,0.100634,0.409552,229.2
-exp03_cnn_weighted,EXP-03: CNN Baseline + Class Weighting,cnn_baseline,False,True,0,19,27,0.525699,1.446555,0.485273,0.040426,0.485503,94.81
-exp04_mobilenet_tl,EXP-04: MobileNetV3-Small Transfer Learning,mobilenet_v3_small,False,False,0,30,30,0.98407,1.054558,0.712482,0.271588,0.719335,97.1
-exp05_mobilenet_aug_reg,EXP-05: MobileNetV3 + Aug + Regularisasi,mobilenet_v3_small,True,False,0,27,30,0.840096,1.10032,0.698457,0.141639,0.708171,224.9
-exp06_mobilenet_finetune,EXP-06: MobileNetV3 Fine-Tune + Aug + Weight,mobilenet_v3_small,True,True,4,27,30,0.85813,1.098269,0.692847,0.165283,0.698044,260.17
-exp07_cnn_mitigation,EXP-07: CNN Baseline Extended + Scheduler,cnn_baseline,True,False,0,24,34,0.530207,1.483047,0.481066,0.049141,0.460808,256.04
+exp_id,title,model_name,image_size,augment,class_weighting,unfreeze_last_n,stage1_epochs,best_epoch,epochs_ran,best_train_loss,best_train_accuracy,best_val_loss,best_val_accuracy,train_val_acc_gap,best_val_macro_f1,best_val_macro_precision,best_val_macro_recall,total_training_seconds
+exp01_cnn_control,EXP-01: CNN Baseline Kontrol,cnn_baseline,128,False,False,0,0,30,30,1.183195,0.56838,1.41307,0.493689,0.074691,0.489959,0.508802,0.48872,111.35
+exp02_cnn_aug,EXP-02: CNN Baseline + Augmentasi,cnn_baseline,128,True,False,0,0,29,30,1.312589,0.528404,1.604104,0.42777,0.100634,0.409552,0.449351,0.411714,229.2
+exp03_cnn_weighted,EXP-03: CNN Baseline + Class Weighting,cnn_baseline,128,False,True,0,0,19,27,1.228795,0.525699,1.446555,0.485273,0.040426,0.485503,0.510199,0.492115,94.81
+exp04_mobilenet_tl,EXP-04: MobileNetV3-Small Transfer Learning,mobilenet_v3_small,128,False,False,0,0,30,30,0.109077,0.98407,1.054558,0.712482,0.271588,0.719335,0.721797,0.727128,97.1
+exp05_mobilenet_aug_reg,EXP-05: MobileNetV3 + Aug + Regularisasi,mobilenet_v3_small,128,True,False,0,0,27,30,0.726075,0.840096,1.10032,0.698457,0.141639,0.708171,0.716483,0.706501,224.9
+exp06_mobilenet_finetune,EXP-06: MobileNetV3 Fine-Tune + Aug + Weight,mobilenet_v3_small,128,True,True,4,0,27,30,0.660187,0.85813,1.098269,0.692847,0.165283,0.698044,0.693741,0.716462,260.17
+exp07_cnn_mitigation,EXP-07: CNN Baseline Extended + Scheduler,cnn_baseline,128,True,False,0,0,24,34,1.309013,0.530207,1.483047,0.481066,0.049141,0.460808,0.491548,0.473349,256.04
+exp08_mobilenet_224_head,EXP-08: MobileNetV3 224x224 + Aug Bersih,mobilenet_v3_small,224,True,False,0,0,12,19,0.253059,0.917644,0.784431,0.750351,0.167293,0.76252,0.776888,0.759364,253.27
+exp09_mobilenet_224_reg,EXP-09: MobileNetV3 224x224 + Reg Terukur,mobilenet_v3_small,224,True,False,0,0,12,19,0.560558,0.913135,0.925924,0.755961,0.157174,0.766422,0.779454,0.766367,212.65
+exp10_mobilenet_224_2stage_ft,EXP-10: MobileNetV3 224x224 2-Stage FT,mobilenet_v3_small,224,True,False,4,8,30,30,0.418934,0.97385,0.870268,0.779804,0.194046,0.791621,0.795064,0.801678,366.55
+exp11_mobilenet_224_2stage_cw,EXP-11: MobileNetV3 224x224 2-Stage FT + CW,mobilenet_v3_small,224,True,True,4,8,26,30,0.42401,0.975353,0.908075,0.778401,0.196952,0.790001,0.78956,0.804665,369.28

@@ -200,7 +200,7 @@ def save_sanity_batch_grid(
     va_indices = rng.choice(len(val_ds), size=min(n_samples, len(val_ds)), replace=False)
 
     cols = max(len(tr_indices), len(va_indices))
-    fig, axes = plt.subplots(2, cols, figsize=(2.4 * cols, 5.2), dpi=200)
+    fig, axes = plt.subplots(2, cols, figsize=(2.4 * cols, 5.8), dpi=200)
     if cols == 1:
         axes = np.expand_dims(axes, axis=1)
 
@@ -209,24 +209,24 @@ def save_sanity_batch_grid(
         tensor, label = train_ds[int(idx)]
         img = unnormalize_for_display(tensor, train_ds.model_name)
         axes[0, c].imshow(img)
-        axes[0, c].set_title(f"Train (Aug)\n{CLASS_NAMES[label]}", fontsize=8.5, fontweight="bold")
+        axes[0, c].set_title(f"Train (Aug)\n{CLASS_NAMES[label]}", fontsize=8.5, fontweight="bold", pad=6)
         axes[0, c].axis("off")
 
     for c, idx in enumerate(va_indices):
         tensor, label = val_ds[int(idx)]
         img = unnormalize_for_display(tensor, val_ds.model_name)
         axes[1, c].imshow(img)
-        axes[1, c].set_title(f"Val (Clean)\n{CLASS_NAMES[label]}", fontsize=8.5)
+        axes[1, c].set_title(f"Val (Clean)\n{CLASS_NAMES[label]}", fontsize=8.5, pad=6)
         axes[1, c].axis("off")
 
     sz = train_ds.image_size
-    plt.suptitle(
+    fig.suptitle(
         f"Sanity Check Preprocessing ({sz[0]}x{sz[1]} RGB, Unnormalized Display) — Train vs Validation",
         fontweight="bold",
         fontsize=11,
-        y=1.01,
+        y=0.98,
     )
-    plt.tight_layout()
+    fig.subplots_adjust(top=0.85, bottom=0.03, left=0.02, right=0.98, hspace=0.36, wspace=0.08)
     out = Path(output_path)
     out.parent.mkdir(parents=True, exist_ok=True)
     plt.savefig(out, bbox_inches="tight")

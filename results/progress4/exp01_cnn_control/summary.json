@@ -1,0 +1,41 @@
+{
+  "spec": {
+    "exp_id": "exp01_cnn_control",
+    "title": "EXP-01: CNN Baseline Kontrol",
+    "model_name": "cnn_baseline",
+    "optimizer_name": "Adam",
+    "lr": 0.001,
+    "weight_decay": 0.0,
+    "batch_size": 32,
+    "max_epochs": 30,
+    "augment": false,
+    "class_weighting": false,
+    "pretrained": false,
+    "freeze_backbone": false,
+    "dropout": 0.3
+  },
+  "environment": {
+    "device": "cuda",
+    "cuda_device_name": "Tesla T4",
+    "torch_version": "2.11.0+cu130",
+    "seed": 42
+  },
+  "model_stats": {
+    "total_parameters": 102089,
+    "trainable_parameters": 102089
+  },
+  "dataset_counts": {
+    "train": 3327,
+    "validation": 713,
+    "test_used": false
+  },
+  "best_epoch": 30,
+  "best_val_loss": 1.41307,
+  "best_val_accuracy": 0.493689,
+  "best_val_macro_f1": 0.489959,
+  "best_val_macro_precision": 0.508802,
+  "best_val_macro_recall": 0.48872,
+  "epochs_ran": 30,
+  "total_training_seconds": 111.35,
+  "best_checkpoint": "/kaggle/working/progress4_results/exp01_cnn_control/best_model.pt"
+}

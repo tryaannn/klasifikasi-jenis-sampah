@@ -1,0 +1,41 @@
+{
+  "spec": {
+    "exp_id": "exp02_cnn_aug",
+    "title": "EXP-02: CNN Baseline + Augmentasi",
+    "model_name": "cnn_baseline",
+    "optimizer_name": "Adam",
+    "lr": 0.001,
+    "weight_decay": 0.0,
+    "batch_size": 32,
+    "max_epochs": 30,
+    "augment": true,
+    "class_weighting": false,
+    "pretrained": false,
+    "freeze_backbone": false,
+    "dropout": 0.3
+  },
+  "environment": {
+    "device": "cuda",
+    "cuda_device_name": "Tesla T4",
+    "torch_version": "2.11.0+cu130",
+    "seed": 42
+  },
+  "model_stats": {
+    "total_parameters": 102089,
+    "trainable_parameters": 102089
+  },
+  "dataset_counts": {
+    "train": 3327,
+    "validation": 713,
+    "test_used": false
+  },
+  "best_epoch": 29,
+  "best_val_loss": 1.604104,
+  "best_val_accuracy": 0.42777,
+  "best_val_macro_f1": 0.409552,
+  "best_val_macro_precision": 0.449351,
+  "best_val_macro_recall": 0.411714,
+  "epochs_ran": 30,
+  "total_training_seconds": 229.2,
+  "best_checkpoint": "/kaggle/working/progress4_results/exp02_cnn_aug/best_model.pt"
+}

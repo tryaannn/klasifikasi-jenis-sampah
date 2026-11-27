@@ -1,0 +1,41 @@
+{
+  "spec": {
+    "exp_id": "exp03_cnn_weighted",
+    "title": "EXP-03: CNN Baseline + Class Weighting",
+    "model_name": "cnn_baseline",
+    "optimizer_name": "Adam",
+    "lr": 0.001,
+    "weight_decay": 0.0,
+    "batch_size": 32,
+    "max_epochs": 30,
+    "augment": false,
+    "class_weighting": true,
+    "pretrained": false,
+    "freeze_backbone": false,
+    "dropout": 0.3
+  },
+  "environment": {
+    "device": "cuda",
+    "cuda_device_name": "Tesla T4",
+    "torch_version": "2.11.0+cu130",
+    "seed": 42
+  },
+  "model_stats": {
+    "total_parameters": 102089,
+    "trainable_parameters": 102089
+  },
+  "dataset_counts": {
+    "train": 3327,
+    "validation": 713,
+    "test_used": false
+  },
+  "best_epoch": 19,
+  "best_val_loss": 1.446555,
+  "best_val_accuracy": 0.485273,
+  "best_val_macro_f1": 0.485503,
+  "best_val_macro_precision": 0.510199,
+  "best_val_macro_recall": 0.492115,
+  "epochs_ran": 27,
+  "total_training_seconds": 94.81,
+  "best_checkpoint": "/kaggle/working/progress4_results/exp03_cnn_weighted/best_model.pt"
+}

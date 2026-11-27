@@ -21,3 +21,13 @@ Thumbs.db
 .cache/
 .pytest_cache/
 tmp/
+
+# Kaggle credentials, personal metadata, and dataset caches
+kaggle.json
+access_token
+kaggle/kernel-metadata.json
+results/kaggle_run*/
+*.npy
+*.npz
+laporan/*_Aptos.docx
+laporan/*_Updated.docx
